@@ -37,7 +37,7 @@ for i, line in enumerate(input):
 # Append last card without trailing new line
 list_of_cards.append(card)
 
-# Function to cross of a number on a bingo card
+# Function to cross off a number on a bingo card
 def cross_off_number(bingo_card, number):
     for i, row in enumerate(bingo_card):
         for j, cell in enumerate(row):
@@ -59,6 +59,7 @@ def check_bingo_card(bingo_card):
                 bingo_row[c] = False
                 bingo_col[r] = False
 
+    # If one of the rows or columns is still true, it's a bingo!
     return max(bingo_row) or max(bingo_col)
 #
 # test_card_row = [[-1, -1, -1, -1, -1], [8, 2, 23, 4, 24], [21, 9, 14, 16, 7], [6, 10, 3, 18, 5], [1, 12, 20, 15, 19]]

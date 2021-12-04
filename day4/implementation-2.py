@@ -37,7 +37,7 @@ for i, line in enumerate(input):
 # Append last card without trailing new line
 list_of_cards.append(card)
 
-# Function to cross of a number on a bingo card
+# Function to cross off a number on a bingo card
 def cross_off_number(bingo_card, number):
     for i, row in enumerate(bingo_card):
         for j, cell in enumerate(row):
@@ -59,6 +59,7 @@ def check_bingo_card(bingo_card):
                 bingo_row[c] = False
                 bingo_col[r] = False
 
+    # If one of the rows or columns is still true, it's a bingo!
     return max(bingo_row) or max(bingo_col)
 #
 # test_card_row = [[-1, -1, -1, -1, -1], [8, 2, 23, 4, 24], [21, 9, 14, 16, 7], [6, 10, 3, 18, 5], [1, 12, 20, 15, 19]]
@@ -77,7 +78,7 @@ def sum_remaining_cells(bingo_card):
 
     return sum
 
-
+# List to keep track of which bingo cards have gotten a bingo already
 winning_cards = [False] * len(list_of_cards)
 final_card = 0
 
@@ -91,8 +92,10 @@ for b in range(len(balls)):
             # exit()
             winning_cards[c] = True
 
+    # Once we have one card remaining, we know which card is the last to win
     if sum(winning_cards) == len(winning_cards)-1:
         final_card = winning_cards.index(False)
+    # And once that card wins, we can calculate the answer using the final ball
     elif sum(winning_cards) == len(winning_cards):
         print(f"Last winning card: {final_card+1}, At ball: {balls[b]}, Remainder card: {sum_remaining_cells(list_of_cards[final_card])}")
         print(f"Answer: {balls[b] * sum_remaining_cells(list_of_cards[final_card])}")
