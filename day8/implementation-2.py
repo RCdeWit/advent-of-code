@@ -22,6 +22,7 @@ for i, line in enumerate(input):
 count_numbers = [0] * 10
 
 # Based on a line of inputs and outputs, deduce the translation of signals to numbers
+# Bit nasty with the repetitive for loops, but it needs to be done per number. And it's not prohibitingly slow.
 def find_definitions(input):
     dictionary_numbers = [-1] * 10
 
@@ -96,13 +97,14 @@ def find_definitions(input):
 
 # Now do the actual decoding per line
 results_decoding = []
+
+# Loop over all lines in input
 for i, val in enumerate(values):
     dictionary = find_definitions(val)
     result_line = ""
+    # Loop over all digits in output
     for j, number in enumerate(val[1]):
-        # decoded = number.index(dictionary)
-        # result_line.append(decoded)
-
+        # Loop over letters in coded digits
         for n, dic in enumerate(dictionary):
             if dic == number:
                 result_line += str(n)
