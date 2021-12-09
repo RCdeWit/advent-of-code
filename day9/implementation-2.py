@@ -58,12 +58,61 @@ def get_is_lowpoint(map, coordinate):
 
     return is_lowpoint
 
-total_risk_level = 0
+def get_larger_neighbours(map, coordinate):
+    x = coordinate[0]
+    y = coordinate[1]
+    directions = ["north", "south", "east", "west"]
+    value_coordinate = get_value_coordinate(map, [x, y])
+
+    larger_neighbours = []
+
+    for dir in directions:
+        adjacent_value = get_adjacent_value(map, coordinate, dir)
+
+        if adjacent_value >= value_coordinate and adjacent_value not in (9, 100):
+            if dir == "north":
+                larger_neighbours.append([x, y - 1])
+            elif dir == "south":
+                larger_neighbours.append([x, y + 1])
+            elif dir == "east":
+                larger_neighbours.append([x + 1, y])
+            elif dir == "west":
+                larger_neighbours.append([x - 1, y])
+
+    return larger_neighbours
+
+def get_basin_size(map, low_point):
+    basin_size = 1
+    to_visit = []
+    have_visited = []
+    to_visit.extend(get_larger_neighbours(map, low_point))
+
+    while len(to_visit) > 0:
+        coordinate = to_visit[0]
+
+        if coordinate not in have_visited:
+            to_visit.extend(get_larger_neighbours(map, coordinate))
+            have_visited.append(coordinate)
+
+        to_visit.pop(0)
+
+    basin_size += len(have_visited)
+
+    return basin_size
+
+
+low_points = []
+
 for y, col in enumerate(heights):
     for x, val in enumerate(col):
         coordinate = [x, y]
         value = get_value_coordinate(heights, coordinate)
         if get_is_lowpoint(heights, coordinate):
-            total_risk_level += (value + 1)
+            low_points.append(coordinate)
 
-print(f"Total risk level: {total_risk_level}")
+basin_sizes = []
+for lp in low_points:
+    basin_sizes.append(get_basin_size(heights, lp))
+
+basin_sizes.sort(reverse=True)
+print(basin_sizes)
