@@ -17,6 +17,7 @@ def get_value_coordinate(map, coordinate):
     y = coordinate[1]
 
     if x < 0 or y < 0:
+        # We hit a wall
         return 100
     else:
         return map[y][x]
@@ -52,6 +53,7 @@ def get_is_lowpoint(map, coordinate):
     for dir in directions:
         adjacent_value = get_adjacent_value(map, coordinate, dir)
 
+        # If we can find an adjacent point with a lower or equal value, this is not a low point
         if adjacent_value <= value_coordinate:
             is_lowpoint = False
             break
@@ -83,9 +85,8 @@ def get_larger_neighbours(map, coordinate):
 
 def get_basin_size(map, low_point):
     basin_size = 1
-    to_visit = []
+    to_visit = get_larger_neighbours(map, low_point)
     have_visited = []
-    to_visit.extend(get_larger_neighbours(map, low_point))
 
     while len(to_visit) > 0:
         coordinate = to_visit[0]
@@ -102,7 +103,6 @@ def get_basin_size(map, low_point):
 
 
 low_points = []
-
 for y, col in enumerate(heights):
     for x, val in enumerate(col):
         coordinate = [x, y]
