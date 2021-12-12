@@ -28,7 +28,7 @@ for arch in arches:
 
 revisit_small_available = True
 
-# Horrendous approach, but we
+# Horrendous approach, but we can check if we used our double small cave already
 def double_small_cave_exists(path):
     count = 0
     for node in set(path):
