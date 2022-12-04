@@ -30,6 +30,7 @@ with open(input_file) as f:
 
     input = input_parsed
 
+# See if one section fully contains the other section
 def section_fully_contains_other_section(section_1, section_2):
     start_1 = section_1[0]
     end_1 = section_1[1]
@@ -43,7 +44,20 @@ def section_fully_contains_other_section(section_1, section_2):
     else:
         return False
 
-        
+# See if two sections overlap
+def section_partially_contains_other_section(section_1, section_2):
+    start_1 = section_1[0]
+    end_1 = section_1[1]
+    start_2 = section_2[0]
+    end_2 = section_2[1]
+
+    if start_2 > end_1:
+        return False
+    elif start_1 > end_2:
+        return False
+    else:
+        return True
+
 
 # Print results depending on the question (1 or 2)
 match question:
@@ -56,4 +70,9 @@ match question:
         print(count)
 
     case "2":
-        print(0)
+        count = 0
+
+        for pair in input:
+            count = count + section_partially_contains_other_section(pair[0], pair[1])
+
+        print(count)
