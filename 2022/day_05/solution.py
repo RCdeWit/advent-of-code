@@ -82,6 +82,18 @@ def move_crates(stacks, directions):
         stacks[destination].append(target)
 
     return stacks
+
+def move_crates_maintain_order(stacks, directions):
+    n_moves = directions[0]
+    origin = directions[1]
+    destination = directions[2]
+
+    target = stacks[origin][-n_moves:]
+
+    stacks[origin] = stacks[origin][:-n_moves]
+    stacks[destination].extend(target)
+
+    return stacks
         
 # Print results depending on the question (1 or 2)
 match question:
@@ -98,4 +110,13 @@ match question:
         print(result)
 
     case "2":
-        print("End")
+        stacks = input_crates
+        for d in input_directions:
+            stacks = move_crates_maintain_order(stacks, d)
+            
+        result = ""
+
+        for s in stacks:
+            result = result + s.pop()
+
+        print(result)
