@@ -61,16 +61,41 @@ with open(input_file) as f:
         regex = "^move (\d+) from (\d+) to (\d+)$"
 
         direction = re.search(regex, l).groups()
-        direction = tuple(int(item) for item in direction)
+        direction = list(int(item) for item in direction)
+
+        # Make stacks 0 indexed
+        direction[1] = direction[1] - 1
+        direction[2] = direction[2] - 1
+
         directions.append(direction)
 
     input_crates = crates
     input_directions = directions
+
+def move_crates(stacks, directions):
+    n_moves = directions[0]
+    origin = directions[1]
+    destination = directions[2]
+
+    for i in range(n_moves):
+        target = stacks[origin].pop()
+        stacks[destination].append(target)
+
+    return stacks
         
 # Print results depending on the question (1 or 2)
 match question:
     case "1":
-        print("End")
+        stacks = input_crates
+        for d in input_directions:
+            stacks = move_crates(stacks, d)
+            
+        result = ""
+
+        for s in stacks:
+            result = result + s.pop()
+
+        print(result)
 
     case "2":
         print("End")
