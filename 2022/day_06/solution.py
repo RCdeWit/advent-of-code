@@ -14,6 +14,8 @@ question = args.question
 with open(input_file) as f:
     input = list(f.read())
 
+# Iterate through all characters in input, use buffer of marker_length
+# If the buffer only contains distinct characters, we've found our marker position
 def find_marker_position(datastream, marker_length):
     buffer = []
 
@@ -27,6 +29,7 @@ def find_marker_position(datastream, marker_length):
             if len(set(buffer)) == marker_length:
                 return(i+1)
 
+            # Ditch first character in buffer
             buffer.pop(0)
 
 # Print results depending on the question (1 or 2)
