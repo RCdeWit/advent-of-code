@@ -19,5 +19,4 @@ match question:
     case "1":
         print(1)
     case "2":
-        result = find_marker_position(input, marker_length=14)
         print(2)
