@@ -22,7 +22,6 @@ with open(input_file) as f:
         tree_map.append(tree_line)
 
 def determine_visibility_tree(tree_map, tree_x=0, tree_y=0):
-
     # Edges of map, always visible
     if tree_x == 0 or tree_y == 0 or tree_x == len(tree_map[tree_y] or tree_y == len(tree_map)):
         return True
@@ -34,10 +33,17 @@ def determine_visibility_tree(tree_map, tree_x=0, tree_y=0):
     visible_w = True
     visible_e = True
 
+    # First search North and South
     for x, x_height in enumerate(tree_map[tree_y]):
         if x_height >= tree_height:
             if x == tree_x:
-                None
+                # At this point we've searched everything to the West
+                # If it's visible from that direction, this tree is eliminated
+                if visible_w:
+                    return True
+                else:
+                    # Continue searching East
+                    None
             elif x < tree_x:
                 visible_w = False
             elif x > tree_x:
@@ -46,15 +52,22 @@ def determine_visibility_tree(tree_map, tree_x=0, tree_y=0):
                 print("ERROR: this should never happen")
                 exit()
 
-    if visible_w or visible_e:
+    if visible_e:
         return True
 
+    # Then from West to East
     for y, row in enumerate(tree_map):
         y_height = row[tree_x]
 
         if y_height >= tree_height:
             if y == tree_y:
-                None
+                # At this point we've searched everything to the North
+                # If it's visible from that direction, this tree is eliminated
+                if visible_n:
+                    return True
+                else:
+                    # Continue searching South
+                    None
             elif y < tree_y:
                 visible_n = False
             elif y > tree_y:
@@ -63,9 +76,8 @@ def determine_visibility_tree(tree_map, tree_x=0, tree_y=0):
                 print("ERROR: this should never happen")
                 exit()
 
-    if visible_n or visible_s:
+    if visible_s:
         return True
-
     else:
         return False
 
@@ -77,6 +89,7 @@ def determine_scenic_score_tree(tree_map, tree_x=0, tree_y=0):
     visible_w = 0
     visible_e = 0
 
+    # First search North and South
     for x, x_height in enumerate(tree_map[tree_y]):
         if x == tree_x:
             None
@@ -92,6 +105,7 @@ def determine_scenic_score_tree(tree_map, tree_x=0, tree_y=0):
             print("ERROR: this should never happen")
             exit()
 
+    # Then from West to East
     for y, row in enumerate(tree_map):
         y_height = row[tree_x]
 
