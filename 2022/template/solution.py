@@ -11,7 +11,7 @@ question = args.question
 
 # Read input
 with open(input_file) as f:
-    input = list(f.read())
+    input = list(f.read().splitlines())
 
 # Print results depending on the question (1 or 2)
 match question:
