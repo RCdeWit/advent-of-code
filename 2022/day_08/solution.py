@@ -69,6 +69,47 @@ def determine_visibility_tree(tree_map, tree_x=0, tree_y=0):
     else:
         return False
 
+def determine_scenic_score_tree(tree_map, tree_x=0, tree_y=0):
+    tree_height = tree_map[tree_y][tree_x]
+
+    visible_n = 0
+    visible_s = 0
+    visible_w = 0
+    visible_e = 0
+
+    for x, x_height in enumerate(tree_map[tree_y]):
+        if x == tree_x:
+            None
+        elif x < tree_x:
+            if x_height >= tree_height:
+                visible_w = 0
+            visible_w = visible_w + 1
+        elif x > tree_x:
+            visible_e = visible_e + 1
+            if x_height >= tree_height:
+                break
+        else:
+            print("ERROR: this should never happen")
+            exit()
+
+    for y, row in enumerate(tree_map):
+        y_height = row[tree_x]
+
+        if y == tree_y:
+            None
+        elif y < tree_y:
+            if y_height >= tree_height:
+                visible_n = 0
+            visible_n = visible_n + 1
+        elif y > tree_y:
+            visible_s = visible_s + 1
+            if y_height >= tree_height:
+                break
+        else:
+            print("ERROR: this should never happen")
+            exit()
+
+    return(visible_n * visible_e * visible_s * visible_w)
 
 # Print results depending on the question (1 or 2)
 match question:
@@ -83,4 +124,11 @@ match question:
         print(count_visible)
 
     case "2":
-        print(2)
+        score_list = []
+
+        for y, row in enumerate(tree_map):
+            for x, height in enumerate(row):
+                scenic_score = determine_scenic_score_tree(tree_map, tree_x=x, tree_y=y)
+                score_list.append(scenic_score)
+
+        print(max(score_list))
