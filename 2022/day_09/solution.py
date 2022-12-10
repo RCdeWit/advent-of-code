@@ -29,7 +29,7 @@ def create_empty_map(width, height):
     return map
 
 # Take one step at a time, return new map
-def move_rope_along_map(map, direction, head=[0, 0], tail=[0,0]):
+def move_rope_along_map(map, direction, head, tail):
     head_x = head[1]
     head_y = head[0]
     tail_x = tail[1]
@@ -64,7 +64,7 @@ def move_rope_along_map(map, direction, head=[0, 0], tail=[0,0]):
                 tail_x = head_x
 
     # map[head_y][head_x] = 1
-    map[tail_y][tail_x] = 1
+    # map[tail_y][tail_x] = 1
 
     return(map, [head_y, head_x], [tail_y, tail_x])
 
@@ -93,7 +93,8 @@ def sum_map(map):
     result = 0
     for y in map:
         for x in y:
-            result = result + x
+            if x == 1:
+                result = result + 1
 
     return(result)
 
@@ -116,4 +117,49 @@ match question:
         print(sum_map(map))
 
     case "2":
-        print(2)
+        dimensions = 100
+        map = create_empty_map(dimensions*2, dimensions*2)
+        map[dimensions][dimensions] = 1
+        head = [dimensions, dimensions]
+        tail = [dimensions, dimensions]
+
+        knot_list = []
+        for _ in range(0, 10):
+            knot_list.append([dimensions, dimensions])
+
+        for line in input:
+            distance = int(line[1])
+
+            for i in range(0, distance):
+                direction = line[0]
+                for knot, location in enumerate(knot_list[:-1]):
+                    head = location
+                    tail = knot_list[knot+1]
+                    result = move_rope_along_map(map, direction, head, tail)
+
+                    new_head_loc = result[1]
+                    new_tail_loc = result[2]
+
+                    knot_list[knot] = new_head_loc
+                    knot_list[knot+1] = new_tail_loc
+
+                    # if knot == 8:
+                    #     map[new_head_loc[0]][new_head_loc[1]] = 1
+
+                    if new_tail_loc == tail:
+                        break
+
+                    if knot+1 == len(knot_list)-1:
+                        map[new_tail_loc[0]][new_tail_loc[1]] = 1
+
+        for line in reversed(map):
+            display = ""
+            for char in line:
+                if char == 0:
+                    display += "."
+                else:
+                    display += "8"
+
+            # print(display)
+
+        print(sum_map(map))
