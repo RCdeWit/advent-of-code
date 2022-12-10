@@ -98,6 +98,53 @@ def sum_map(map):
 
     return(result)
 
+def move_head(head, direction):
+    head_x = head[1]
+    head_y = head[0]
+
+    match direction:
+        case "R":
+            head_x = head_x + 1
+        case "L":
+            head_x = head_x - 1
+        case "U":
+            head_y = head_y + 1
+        case "D":
+            head_y = head_y - 1
+
+    return([head_y, head_x])
+
+def move_tail(head, tail):
+    head_x = head[1]
+    head_y = head[0]
+    tail_x = tail[1]
+    tail_y = tail[0]
+
+    delta_x = head_x - tail_x
+    delta_y = head_y - tail_y
+
+    if abs(delta_y) > 1 and head_x == tail_y:
+        tail_y = tail_y + (1 if delta_y > 0 else -1)
+    elif abs(delta_x) > 1 and head_y == tail_y:
+        tail_x = tail_x + (1 if delta_x > 0 else -1)
+    elif abs(delta_y) + abs(delta_x) > 2:
+        tail_y = tail_y + delta_y
+        tail_x = tail_x + delta_x
+
+    return([tail_y, tail_x])
+
+
+def move_tail(head, tail):
+    if abs(head[0] - tail[0]) > 1 and head[1] == tail[1]:
+        return [tail[0] + (1 if head[0] > tail[0] else -1), tail[1]]
+    elif abs(head[1] - tail[1]) > 1 and head[0] == tail[0]:
+        return [tail[0], tail[1] + (1 if head[1] > tail[1] else -1)]
+    elif abs(head[0] - tail[0]) + abs(head[1] - tail[1]) > 2:
+        return [tail[0] + (1 if head[0] > tail[0] else -1), tail[1] + (1 if head[1] > tail[1] else -1)]
+    else:
+        return tail
+
+
 # Print results depending on the question (1 or 2)
 match question:
     case "1":
@@ -117,48 +164,39 @@ match question:
         print(sum_map(map))
 
     case "2":
-        dimensions = 100
+        dimensions = 500
         map = create_empty_map(dimensions*2, dimensions*2)
         map[dimensions][dimensions] = 1
         head = [dimensions, dimensions]
-        tail = [dimensions, dimensions]
-
-        knot_list = []
-        for _ in range(0, 10):
-            knot_list.append([dimensions, dimensions])
+        tails = {knot: [dimensions, dimensions] for knot in range(0, 9)}
 
         for line in input:
             distance = int(line[1])
+            direction = line[0]
 
-            for i in range(0, distance):
-                direction = line[0]
-                for knot, location in enumerate(knot_list[:-1]):
-                    head = location
-                    tail = knot_list[knot+1]
-                    result = move_rope_along_map(map, direction, head, tail)
+            for i in range(distance):
+                head = move_head(head, direction)
+                for k, loc in tails.items():
+                    if k == 0:
+                        preceding_knot = head
+                    else:
+                        preceding_knot = tails[k-1]
+                    new_pos = move_tail(preceding_knot, loc)
+                    tails[k] = new_pos
 
-                    new_head_loc = result[1]
-                    new_tail_loc = result[2]
-
-                    knot_list[knot] = new_head_loc
-                    knot_list[knot+1] = new_tail_loc
-
-                    # if knot == 8:
-                    #     map[new_head_loc[0]][new_head_loc[1]] = 1
-
-                    if new_tail_loc == tail:
+                    if new_pos == loc:
                         break
 
-                    if knot+1 == len(knot_list)-1:
-                        map[new_tail_loc[0]][new_tail_loc[1]] = 1
+                t = tails[8]
+                map[t[0]][t[1]] = 1
 
-        for line in reversed(map):
-            display = ""
-            for char in line:
-                if char == 0:
-                    display += "."
-                else:
-                    display += "8"
+        # for line in reversed(map):
+        #     display = ""
+        #     for char in line:
+        #         if char == 0:
+        #             display += "."
+        #         else:
+        #             display += "8"
 
             # print(display)
 
