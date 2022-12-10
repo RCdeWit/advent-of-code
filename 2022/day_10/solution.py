@@ -1,4 +1,5 @@
 import argparse
+import math
 
 # Parse CLI arguments
 parser = argparse.ArgumentParser()
@@ -50,4 +51,30 @@ match question:
         print(result)
 
     case "2":
-        print(2)
+        CRT = []
+        for _ in range(0, 6):
+            row = []
+            for _ in range(0, 40):
+                row.append([0])
+            CRT.append(row)
+
+        X = 1
+        for i, line in enumerate(input):
+            cycle = i
+
+            if abs(X - (cycle % 40)) <= 1:
+                # Draw pixel
+                current_row = math.floor(cycle / 40)
+                current_x = cycle % 40
+                CRT[current_row][current_x] = 1
+
+            X = process_command(line, X)
+
+        for row in CRT:
+            line = ""
+            for pixel in row:
+                if pixel == 1:
+                    line = line + "#"
+                else:
+                    line = line + " "
+            print(line)
