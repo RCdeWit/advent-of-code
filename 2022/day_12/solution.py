@@ -60,7 +60,6 @@ def find_paths(map, start_location, end_location):
         visited_positions
 
         if position == end_location:
-            print("FOUND IT")
             return(visited_positions[position])
         else:
             next_steps = find_valid_steps(map, position, visited_positions.keys())
@@ -86,4 +85,22 @@ match question:
         print(result)
 
     case "2":
-        print(2)
+        # Naive approach, but fast enough
+        potential_start_locations = []
+        for y, row in enumerate(map):
+            map_row = []
+            for x, val in enumerate(row):
+                map_row.append(-1)
+                if val in (0, 1):
+                    potential_start_locations.append((y, x))
+                elif val == 27:
+                    end_location = (y, x)
+
+        result = -1
+        for start_location in potential_start_locations:
+            solution = find_paths(map, start_location, end_location)
+            if type(solution) == int:
+                if solution < result or result == -1:
+                    result = solution
+
+        print(result)
