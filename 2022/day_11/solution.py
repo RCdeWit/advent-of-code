@@ -62,7 +62,7 @@ def inspect_item(item, operation):
 
     return result
 
-def process_turn(monkeys, current_monkey):
+def process_turn(monkeys, current_monkey, lower_stress, supermod):
 
     operation = monkeys[current_monkey]['Operation']
     if_true = monkeys[current_monkey]['If true']
@@ -71,7 +71,7 @@ def process_turn(monkeys, current_monkey):
     for value in monkeys[current_monkey]['Starting items']:
         new_value = inspect_item(value, operation)
         monkeys[current_monkey]['Activities'] += 1
-        new_value = math.floor(new_value / 3)
+        new_value = worry_level(new_value, lower_stress, supermod)
 
         if new_value % monkeys[current_monkey]['Test'] == 0:
             monkeys[if_true]['Starting items'].append(new_value)
@@ -82,18 +82,24 @@ def process_turn(monkeys, current_monkey):
 
     return(monkeys)
 
-def process_round(monkeys):
+def process_round(monkeys, lower_stress, supermod):
     for monkey in monkeys:
-        monkeys = process_turn(monkeys, monkey)
+        monkeys = process_turn(monkeys, monkey, lower_stress, supermod)
 
     return monkeys
+
+def worry_level(level, lower_stress, supermod):
+    if lower_stress:
+        return math.floor(level / 3)
+    elif not lower_stress:
+        return (level % supermod)
 
 
 # Print results depending on the question (1 or 2)
 match question:
     case "1":
         for r in range(20):
-            monkeys = process_round(monkeys)
+            monkeys = process_round(monkeys, lower_stress=True, supermod=1)
 
         result = []
         for monkey in monkeys:
@@ -103,4 +109,16 @@ match question:
 
         print(result[-1] * result[-2])
     case "2":
-        print(2)
+        supermod = 1
+        for m in monkeys:
+            supermod = supermod * monkeys[m]['Test']
+
+        for r in range(10000):
+            monkeys = process_round(monkeys, lower_stress=False, supermod=supermod)
+
+        result = []
+        for monkey in monkeys:
+            result.append(monkeys[monkey]['Activities'])
+
+        result = sorted(result)
+        print(result[-1] * result[-2])
