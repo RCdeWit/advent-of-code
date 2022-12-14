@@ -23,7 +23,7 @@ with open(input_file) as f:
 
     input = parsed
 
-def create_map(input):
+def create_map(input, mode=1):
     min_x = float('inf')
     max_x = 0
     max_y = 0
@@ -31,12 +31,16 @@ def create_map(input):
     # Find dimensions
     for line in input:
         for coordinate in line:
+            if coordinate[1] > max_y:
+                max_y = coordinate[1]
             if coordinate[0] > max_x:
                 max_x = coordinate[0]
             if coordinate[0] < min_x:
                 min_x = coordinate[0]
-            if coordinate[1] > max_y:
-                max_y = coordinate[1]
+
+    if mode == 2:
+        max_y = max_y + 2
+        max_x = max_x + max_y
 
     # Create empty map
     map = []
@@ -62,6 +66,10 @@ def create_map(input):
                 y_max = max(coordinate[1], line[i+1][1])
                 for y in range(y_min, y_max+1):
                     map[y][x] = "#"
+
+    if mode == 2:
+        for x, value in enumerate(map[-1]):
+            map[-1][x] = "#"
 
     return map
 
@@ -92,7 +100,7 @@ def draw_map(map):
     for i, y in enumerate(map):
         line = ""
         for x, character in enumerate(y):
-            if x > 490:
+            if x > 490 and x < 510:
                 line = line + character
         
         print(i, line)
@@ -110,7 +118,19 @@ match question:
             map = result[0]
             done = result[1]
 
-            print(i, done)
+            # print(i, done)
         print(i)
     case "2":
-        print(2)
+        map = create_map(input, mode=2)
+        draw_map(map)
+
+        done = False
+        i = 0
+        while not done:
+            i = i+1
+            result = drop_sand(map, [500, 0])
+            map = result[0]
+            if map[0][500] == "o":
+                done = True
+
+        print(i)
