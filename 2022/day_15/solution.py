@@ -1,5 +1,6 @@
 import argparse
 import re
+from copy import deepcopy
 
 # Parse CLI arguments
 parser = argparse.ArgumentParser()
@@ -101,4 +102,52 @@ match question:
         print(covered - beacons_on_line)
 
     case "2":
-        print(2)
+        x_min = 0
+        x_max = 4000000
+        y_min = 0
+        y_max = 4000000
+
+        boundaries = {}
+        for s in sensors:
+            radius = sensors[s]
+            x = s[0]
+            y = s[1]
+
+            print("SENSOR", x, y, radius)
+
+            for dx in range(radius+1):
+                dy = (radius+1) - dx
+
+                if dx != 0 and dy != 0:
+                    boundaries[(x+dx, y+dy)] = boundaries.get((x+dx, y+dy), 0) + 1
+                    boundaries[(x-dx, y+dy)] = boundaries.get((x-dx, y+dy), 0) + 1
+                    boundaries[(x+dx, y-dy)] = boundaries.get((x+dx, y-dy), 0) + 1
+                    boundaries[(x-dx, y-dy)] = boundaries.get((x-dx, y-dy), 0) + 1
+
+            # Corners, otherwise they get set double
+            boundaries[(x, y+radius+1)] = boundaries.get((x, y+radius+1), 0) + 1
+            boundaries[(x, y-radius-1)] = boundaries.get((x, y-radius-1), 0) + 1
+            boundaries[(x+radius+1, y)] = boundaries.get((x+radius+1, y), 0) + 1
+            boundaries[(x-radius+1, y)] = boundaries.get((x-radius+1, y), 0) + 1
+
+        candidates = []
+
+        for coordinate, value in boundaries.items():
+            if value >= 4:
+                candidates.append(coordinate)
+        
+        filtered = {}
+
+        for c in candidates:
+            cx = c[0]
+            cy = c[1]
+            valid = True
+            for s, radius in sensors.items():
+                sx = s[0]
+                sy = s[1]
+                if is_in_radius([cx, cy], [sx, sy], radius):
+                    valid = False
+                    break
+
+            if valid:
+                print(cx, cy, (cx * 4000000 + cy))
