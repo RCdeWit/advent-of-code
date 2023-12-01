@@ -56,7 +56,7 @@ if __name__ == '__main__':
      # Parse CLI arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("-q", "--question", required=True)
-    parser.add_argument("-i", "--input", required=False)
+    parser.add_argument("-i", "--input", required=False, default='input.txt')
     args = parser.parse_args()
 
     input_file = args.input
