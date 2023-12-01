@@ -15,7 +15,41 @@ def solve_1(input):
     return result
 
 def solve_2(input):
-    return None
+    digits_only = []
+    for line in input:
+        digits_only.append(list(parse_digits(line)))
+    logging.debug(digits_only)
+
+    calibrations = [int(line[0]+line[-1]) for line in digits_only]
+    logging.debug(calibrations)
+
+    result = sum(calibrations)
+    return result
+
+def parse_digits(line: str):
+    if len(line) == 0:
+        return
+
+    elif line.startswith("1") or line.startswith("one"):
+        yield "1"
+    elif line.startswith("2") or line.startswith("two"):
+        yield "2"
+    elif line.startswith("3") or line.startswith("three"):
+        yield "3"
+    elif line.startswith("4") or line.startswith("four"):
+        yield "4"
+    elif line.startswith("5") or line.startswith("five"):
+        yield "5"
+    elif line.startswith("6") or line.startswith("six"):
+        yield "6"
+    elif line.startswith("7") or line.startswith("seven"):
+        yield "7"
+    elif line.startswith("8") or line.startswith("eight"):
+        yield "8"
+    elif line.startswith("9") or line.startswith("nine"):
+        yield "9"
+
+    yield from parse_digits(line[1:])
 
 
 if __name__ == '__main__':
