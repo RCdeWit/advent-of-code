@@ -25,4 +25,10 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+# venv
 .venv/
+
+# AOC inputs
+input.txt
+example_input.txt
+example_input_2.txt
