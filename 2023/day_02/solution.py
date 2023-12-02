@@ -36,6 +36,23 @@ def game_is_possible(game: list):
                 return False
     return True
 
+def min_amounts_per_colour(game: list):
+    min_red = min_green = min_blue = 0
+
+    for sets in game:
+        for colour, amount in sets.items():
+            if colour == "red" and amount > min_red:
+                min_red = amount
+            elif colour == "green" and amount > min_green:
+                min_green = amount
+            elif colour == "blue" and amount > min_blue:
+                min_blue = amount
+
+    return {"red": min_red, "green": min_green, "blue": min_blue}
+
+def get_power_of_set(balls: dict):
+    return balls['red'] * balls['green'] * balls['blue']
+
 def solve_1(input: list):
     games = {}
     for line in input:
@@ -53,7 +70,19 @@ def solve_1(input: list):
 
 
 def solve_2(input: list):
-    return 
+    games = {}
+    for line in input:
+        game_id, sets = parse_line(line)
+        games[game_id] = sets
+    # logging.debug(games)
+
+    result = 0
+    for game_id, game in games.items():
+        balls = min_amounts_per_colour(game)
+        result = result + get_power_of_set(balls)
+
+    return result
+
 
 if __name__ == '__main__':
      # Parse CLI arguments
