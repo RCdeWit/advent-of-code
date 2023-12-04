@@ -9,6 +9,8 @@ def parse_input(input: list):
         card_id, line = line.split(":")
         winning, haves = line.split("|")
 
+        card_id = card_id.strip()
+
         winning = list(filter(None, winning.split(" ")))
         haves = list(filter(None, haves.split(" ")))
 
@@ -35,6 +37,14 @@ def calculate_score(matches: list):
     else:
         return 2 ** (len(matches)-1)
 
+def find_cards_won(card_id: str, all_cards: dict):
+    score = len(list(compare_card(all_cards[card_id])))
+
+    i = 1
+    while i <= score:
+        yield str(int(card_id) + i)
+        i += 1
+
 def solve_1(input):
     cards = parse_input(input)
     
@@ -47,7 +57,18 @@ def solve_1(input):
     return result
 
 def solve_2(input):
-    return
+    cards = parse_input(input)
+    stash = {}
+    for i in range(len(cards)):
+        stash[str(i+1)] = 1
+
+    for key, count in stash.items():
+        cards_won = list(find_cards_won(key, cards))
+        for c in cards_won:
+            stash[c] += count
+
+    # logging.debug(stash)
+    return sum(stash.values())
 
 if __name__ == '__main__':
      # Parse CLI arguments
