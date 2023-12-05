@@ -27,6 +27,17 @@ def parse_input(input: list):
 
     return seeds, maps
 
+def parse_seeds_2(input: str):
+    seeds = [int(seed) for seed in input.split(":")[1][1:].split(" ")]
+    ranges = []
+    i = 0
+    while i < len(seeds):
+        ranges.append(tuple([seeds[i], seeds[i] + seeds[i+1]]))
+        i += 2
+
+    return ranges
+
+
 def map_source_to_dest(origin: int, map_name: str, maps: dict):
     map_current = maps[map_name]
     for key, offset in map_current.items():
@@ -34,6 +45,31 @@ def map_source_to_dest(origin: int, map_name: str, maps: dict):
             return origin + offset
     
     return origin
+
+def map_source_to_dest_2(origin: tuple, map_name: str, maps: dict):
+    map_current = maps[map_name]
+    for key, offset in map_current.items():
+        # logging.debug(f"Finding overlap seed range {origin} in {key}")
+        if origin[0] >= key[0] and origin[1] <= key[1]:
+            # logging.debug(f"COMPLETE: {tuple([origin[0] + offset, origin[1] + offset])}")
+            yield tuple([origin[0] + offset, origin[1] + offset])
+            origin = (-1, -1)
+        elif origin[1] < key[0] or origin[0] > key[1]:
+            # logging.debug("NO MATCH")
+            continue
+        elif origin[0] >= key[0]:
+            # logging.debug("TO RIGHT")
+            yield tuple([origin[0] + offset, key[1] + offset])
+            origin = tuple([key[1] + 1, origin[1]])
+            map_source_to_dest_2(origin, map_name, maps)
+        elif origin[1] <= key[1]:
+            # logging.debug("TO LEFT")
+            yield tuple([key[0] + offset, origin[1] + offset])
+            origin = tuple([origin[0], key[0]-1])
+            map_source_to_dest_2(origin, map_name, maps)
+
+    if origin != (-1, -1):
+        yield origin
 
 def seeds_to_locations(seeds: list, maps: dict):
     destinations = []
@@ -57,7 +93,21 @@ def solve_1(input):
     return min(destinations)
 
 def solve_2(input):
-    return
+    seeds, maps = parse_input(input)
+    seeds = parse_seeds_2(input[0])
+
+    seed_ranges = seeds
+    destinations = []
+    for map_name in maps:
+        for sr in seed_ranges:
+            destination = list(map_source_to_dest_2(sr, map_name, maps))
+            destinations += destination
+        seed_ranges = destinations
+        destinations = []
+
+        # logging.debug(f"{map_name}: {seed_ranges}")
+
+    return sorted([sr[0] for sr in seed_ranges])[0]
 
 if __name__ == '__main__':
      # Parse CLI arguments
