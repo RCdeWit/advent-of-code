@@ -2,7 +2,7 @@ import argparse
 import logging
 import sys
 
-def parse_input(input: list):
+def parse_input(input: list, assignment: int):
     for line in input:
         hand, score = line.split(" ")
         score = int(score)
@@ -19,7 +19,12 @@ def parse_input(input: list):
                     case 'Q':
                         hand_parsed += 'X'
                     case 'J':
-                        hand_parsed += 'W'
+                        if assignment == 1:
+                            hand_parsed += 'W'
+                        elif assignment == 2:
+                            hand_parsed += '0'
+                        else:
+                            logging.error("Provide assignment")
                     case 'T':
                         hand_parsed += 'V'
 
@@ -67,8 +72,25 @@ def calculate_winnings(hands: list):
         winnings += hand[1] *  (i+1)
     return winnings
 
+def assign_joker(hand: tuple):
+    hand = hand[0]
+
+    if "0" in hand:
+        distinct_cards = set(hand)
+        joker = (0, "0")
+        for card in distinct_cards:
+            count = hand.count(card)
+            if count > joker[0] and card != "0":
+                joker = (count, card)
+            elif count == joker[0] and card > joker[1] and card != "0":
+                joker = (count, card)
+
+        return joker[1]
+    else:
+        return None
+
 def solve_1(input):
-    hands = list(parse_input(input))
+    hands = list(parse_input(input, 1))
     parsed_hands = []
     for hand in hands:
         parsed_hands.append((str(evaluate_hand(hand)[0]) + "-" + hand[0], hand[1]))
@@ -77,7 +99,20 @@ def solve_1(input):
     return calculate_winnings(parsed_hands)
 
 def solve_2(input):
-    return
+    hands = list(parse_input(input, 2))
+    parsed_hands = []
+    for hand in hands:
+        if "0" in hand[0]:
+            joker = assign_joker(hand)
+            joker_hand = hand[0].replace("0", joker)
+            rank = evaluate_hand((joker_hand, hand[1]))[0]
+        else:
+            rank = evaluate_hand(hand)[0]
+
+        parsed_hands.append((str(rank) + "-" + hand[0], hand[1]))
+
+    parsed_hands.sort()
+    return calculate_winnings(parsed_hands)
 
 if __name__ == '__main__':
      # Parse CLI arguments
