@@ -147,9 +147,6 @@ def find_adjacent_parts_for_gear(input_map: list, coordinate: tuple):
                     parsed_row = parsed_row + "."
 
         parsed.append(parsed_row)
-        # 0.230..
-        # ...*...
-        # 6...101
 
     for line in parsed:
         part = ""
