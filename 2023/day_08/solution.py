@@ -1,6 +1,7 @@
 import argparse
 import logging
 import sys
+import math
 
 def parse_input(input: list):
     directions = input[0]
@@ -29,6 +30,18 @@ def traverse_nodes(nodes: dict, start: str, directions: str):
 
     return i
 
+def traverse_nodes_2(nodes: dict, start: str, directions: str):
+    i = 0
+    while start[-1] != "Z":
+        direction = directions[i % len(directions)]
+        if direction == "L":
+            destination = nodes[start][0]
+        elif direction == "R":
+            destination = nodes[start][1]
+        start = destination
+        i += 1
+
+    return i
 
 def solve_1(input):
     directions, nodes = parse_input(input)
@@ -36,7 +49,17 @@ def solve_1(input):
     return solution
 
 def solve_2(input):
-    return
+    directions, nodes = parse_input(input)
+
+    steps_per_loop = []
+    for key in nodes:
+        logging.debug(key)
+        if key[-1] == "A":
+            length_loop = traverse_nodes_2(nodes, key, directions)
+            steps_per_loop.append(length_loop)
+
+    lcm = math.lcm(*steps_per_loop)
+    return lcm
 
 if __name__ == '__main__':
      # Parse CLI arguments
