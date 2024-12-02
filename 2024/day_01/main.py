@@ -1,7 +1,7 @@
 import argparse
+import collections
 import logging
 import sys
-import math
 
 def parse_input(input: list):
     list_1 = []
@@ -23,11 +23,32 @@ def compare_list(list_1: list, list_2: list):
         distance = abs(value - list_2[i])
         yield distance
 
-def solve_1(input: list):
+def group_by_count(input_list: list) -> dict:
+    counter = collections.Counter(input_list)
+    return counter
+
+def calculate_similarity_score(input_list: list, reference_list: list) -> int:
+
+    grouped_reference_list = group_by_count(reference_list)
+
+    similarity_score = 0
+    for value in input_list:
+        if value in grouped_reference_list:
+            similarity_score += grouped_reference_list[value] * value
+
+    return similarity_score
+
+def solve_1(input: list) -> int:
     list_1, list_2 = parse_input(input)
     distances = compare_list(list_1, list_2)
 
     return sum(distances)
+
+def solve_2(input: list) -> int:
+    list_1, list_2 = parse_input(input)
+    similarity_score = calculate_similarity_score(list_1, list_2)
+
+    return similarity_score
 
 if __name__ == '__main__':
      # Parse CLI arguments
