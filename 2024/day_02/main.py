@@ -25,9 +25,21 @@ def check_report_safety(report: list[int]):
             if distance < 1 or distance > 3:
                 return False
 
-    # logging.info("Found safe report")
     return True
-            
+
+def check_report_safety_with_dampener(report: list[int]):
+    if check_report_safety(report):
+        return True
+    else:
+        for level, value in enumerate(report):
+            dampened_report = report.copy()
+            dampened_report.pop(level)
+            if check_report_safety(dampened_report):
+                return True
+
+    return False
+
+
 def solve_1(input: list) -> int:
     reports = map(check_report_safety, parse_input(input))
     result = sum(reports)
@@ -36,7 +48,10 @@ def solve_1(input: list) -> int:
 
 
 def solve_2(input: list) -> int:
-    pass
+    reports = map(check_report_safety_with_dampener, parse_input(input))
+    result = sum(reports)
+
+    return result
 
 if __name__ == '__main__':
      # Parse CLI arguments
