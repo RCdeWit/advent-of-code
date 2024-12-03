@@ -4,14 +4,26 @@ import re
 import sys
 
 def parse_input(input: list):
-    expression = "mul\(\d{1,3},\d{1,3}\)"
+    pattern = r"mul\(\d{1,3},\d{1,3}\)"
 
     calculations = []
     for line in input:
-        calculations += re.findall(expression, line)
+        calculations += re.findall(pattern, line)
 
     # logging.debug(calculations)
     return calculations
+
+def split_do_dont(program: list) -> str:
+    # Add explicit do at start
+    program = "do()" + "".join(program)
+    # Split on don't so start of all segments have 1 don't max
+    program = program.split("don't()")
+    # Remove all don'ts that are not followed by do
+    program = [x for x in program if "do()" in x]
+    # Remove all don't substrings at start, retain everything after do
+    program = [x.split("do()", 1)[1] for x in program]
+
+    return "".join(program)
 
 def execute_calculation(calculation: str) -> int:
     instruction = calculation.split("(")[0]
@@ -26,7 +38,11 @@ def solve_1(input: list) -> int:
     return sum(map(execute_calculation, calculations))
 
 def solve_2(input: list) -> int:
-    pass
+    dont_removed = [split_do_dont(input)]
+    calculations = parse_input(dont_removed)
+    # logging.debug(calculations)
+    return sum(map(execute_calculation, calculations))
+
 if __name__ == '__main__':
      # Parse CLI arguments
     parser = argparse.ArgumentParser()
