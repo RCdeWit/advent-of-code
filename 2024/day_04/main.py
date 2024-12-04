@@ -11,16 +11,16 @@ def parse_input(input: list):
         grid.append(row)
     return grid
 
-def find_x(grid: list) -> list:
+def find_letter(grid: list, letter: str) -> list:
     results = []
     for y, row in enumerate(grid):
         for x, char in enumerate(row):
-            if char == 'X':
+            if char == letter:
                 results.append((x, y))
 
     return results
 
-def find_viable_directions(grid: list, coordinates: tuple) -> list:
+def find_viable_directions(grid: list, coordinates: tuple, offset: int) -> list:
     x, y = coordinates
     max_y = len(grid) - 1
     max_x = len(grid[0]) - 1
@@ -29,19 +29,19 @@ def find_viable_directions(grid: list, coordinates: tuple) -> list:
                   "w": (-1, 0), "e": (1, 0),
                   "sw": (-1, 1), "s": (0, 1), "se": (1, 1)}
 
-    if x < 3:
+    if x < offset:
         directions.pop("nw", None)
         directions.pop("w", None)
         directions.pop("sw", None)
-    if x > max_x - 3:
+    if x > max_x - offset:
         directions.pop("ne", None)
         directions.pop("e", None)
         directions.pop("se", None)
-    if y < 3:
+    if y < offset:
         directions.pop("nw", None)
         directions.pop("n", None)
         directions.pop("ne", None)
-    if y > max_y - 3:
+    if y > max_y - offset:
         directions.pop("sw", None)
         directions.pop("s", None)
         directions.pop("se", None)
@@ -49,7 +49,7 @@ def find_viable_directions(grid: list, coordinates: tuple) -> list:
     return directions
 
 def count_xmas_from_x(grid: list, coordinates: tuple) -> int:
-    viable_directions = find_viable_directions(grid, coordinates)
+    viable_directions = find_viable_directions(grid, coordinates, 3)
     x, y = coordinates
     count = 0
 
@@ -64,15 +64,38 @@ def count_xmas_from_x(grid: list, coordinates: tuple) -> int:
 
     return count
 
+def count_xmas_from_a(grid: list, coordinates: tuple) -> int:
+    viable_directions = find_viable_directions(grid, coordinates, 1)
+    x, y = coordinates
+
+    if not set(["ne", "nw", "se", "sw"]).issubset(set(viable_directions.keys())):
+        return 0
+
+    if grid[y-1][x-1] == grid[y+1][x+1]:
+        return 0
+    elif grid[y+1][x-1] == grid[y-1][x+1]:
+        return 0
+    elif grid[y-1][x-1] in ("M", "S") \
+        and grid[y-1][x+1] in ("M", "S") \
+        and grid[y+1][x-1] in ("M", "S") \
+        and grid[y+1][x+1] in ("M", "S"):
+        return 1
+
+    return 0
+
 def solve_1(input: list) -> int:
     grid = parse_input(input)
-    x_coordinates = find_x(grid)
+    x_coordinates = find_letter(grid, "X")
 
     result = sum(map(lambda x: count_xmas_from_x(grid, x), x_coordinates))
     return result
 
 def solve_2(input: list) -> int:
-    pass
+    grid = parse_input(input)
+    a_coordinates = find_letter(grid, "A")
+
+    result = sum(map(lambda x: count_xmas_from_a(grid, x), a_coordinates))
+    return result
 
 if __name__ == '__main__':
      # Parse CLI arguments
