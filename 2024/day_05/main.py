@@ -34,31 +34,35 @@ def check_if_matches_rules(rules: list, update: list) -> bool:
 
     return True
 
-def check_if_matches_order(order: list, update: list) -> bool:
-    index_page_1 = order.index(update[0])
-    order_slice_1 = order[:index_page_1]
-    order_slice_2 = order[index_page_1:]
-    order = order_slice_2 + order_slice_1
+def order_pages(rules: list, update: list) -> list:
+    ordered = []
+    rules = aggregate_rules(rules)
 
-    current_index = -1
+    def find_first_spot_for_insert(page):
+        applicable_rules = set(ordered) & set(rules[page])
+        # logging.debug(f"Page {page}, must be before {applicable_rules}")
+        result = []
 
-    for i in update:
-        if order.index(i) > current_index:
-            current_index = order.index(i)
+        if len(applicable_rules) == 0:
+            return -1
+
+        for ar in applicable_rules:
+            result.append(ordered.index(ar))
+
+        return min(result)
+
+    for page in update:
+        insert_at = find_first_spot_for_insert(page)
+        if insert_at == -1:
+            ordered.append(page)
         else:
-            return False
+            ordered.insert(insert_at, page)
+        # logging.debug(f"Insert {page} at {insert_at}, result: {ordered}")
 
-    return True
+    return ordered
 
 def solve_1(input: list) -> int:
     rules, updates = parse_input(input)
-    # order = calculate_topological_order(rules)
-
-    # logging.debug(rules)
-    # logging.debug(updates)
-    # logging.debug(order)
-
-    # matches = list(map(lambda x: check_if_matches_order(order, x), updates))
     matches = list(map(lambda x: check_if_matches_rules(rules, x), updates))
     middle_pages = list(map(lambda x: x[floor(len(x)/2)], updates))
 
@@ -70,7 +74,16 @@ def solve_1(input: list) -> int:
     return result
 
 def solve_2(input: list) -> int:
-    pass
+    rules, updates = parse_input(input)
+    matches = list(map(lambda x: check_if_matches_rules(rules, x), updates))
+
+    middle_pages = []
+    for i, match in enumerate(matches):
+        if not match:
+            ordered = order_pages(rules, updates[i])
+            middle_pages.append(ordered[floor(len(ordered)/2)])
+
+    return sum(middle_pages)
 
 if __name__ == '__main__':
      # Parse CLI arguments
