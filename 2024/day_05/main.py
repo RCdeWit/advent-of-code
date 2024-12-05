@@ -44,7 +44,7 @@ def order_pages(rules: list, update: list) -> list:
         result = []
 
         if len(applicable_rules) == 0:
-            return -1
+            return len(ordered)
 
         for ar in applicable_rules:
             result.append(ordered.index(ar))
@@ -53,10 +53,7 @@ def order_pages(rules: list, update: list) -> list:
 
     for page in update:
         insert_at = find_first_spot_for_insert(page)
-        if insert_at == -1:
-            ordered.append(page)
-        else:
-            ordered.insert(insert_at, page)
+        ordered.insert(insert_at, page)
         # logging.debug(f"Insert {page} at {insert_at}, result: {ordered}")
 
     return ordered
