@@ -81,38 +81,6 @@ def move_guard(grid: list, position: tuple) -> (list, tuple):
             grid[y][x-1] = direction
             return grid, (x-1, y)
 
-# def check_if_obstacle_works(grid: list, position: tuple, visited: dict) -> bool:
-#     x, y = position
-#     direction = grid[y][x]
-
-#     logging.debug(f"Going {direction} at x={x}, y={y}")
-
-#     look_ahead_x = 0
-#     look_ahead_y = 0
-#     while look_ahead_x + x >= 0 and look_ahead_x + x < len(grid[0]) and look_ahead_y + y >= 0 and look_ahead_y + y < len(grid):
-#         if direction == "L":
-#             look_ahead_y -= 1
-#             if "U" in visited[(x, y + look_ahead_y)]:
-#                 logging.debug(f"Going {direction} at x={x}, y={y}: obstacle would cause loop at {(x-1, y)}")
-#                 return True, (x-1, y)
-#         elif direction == "R":
-#             look_ahead_y += 1
-#             if "D" in visited[(x, y + look_ahead_y)]:
-#                 logging.debug(f"Going {direction} at x={x}, y={y}: obstacle would cause loop at {(x+1, y)}")
-#                 return True, (x+1, y)
-#         elif direction == "U":
-#             look_ahead_x += 1
-#             if "R" in visited[(x + look_ahead_x, y)]:
-#                 logging.debug(f"Going {direction} at x={x}, y={y}: obstacle would cause loop at {(x, y-1)}")
-#                 return True, (x, y-1)
-#         elif direction == "D":
-#             look_ahead_x -= 1
-#             if "L" in visited[(x + look_ahead_x, y)]:
-#                 logging.debug(f"Going {direction} at x={x}, y={y}: obstacle would cause loop at {(x, y+1)}")
-#                 return True, (x, y+1)
-
-#     return False, (None, None)
-
 def place_obstacle(grid: list, location: tuple) -> list:
     x, y = location
     grid[y][x] = "#"
