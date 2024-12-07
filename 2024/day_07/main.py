@@ -16,35 +16,44 @@ def parse_input(input: list):
     # logging.debug(output)
     return output
 
-def test_calculation(calculation: tuple()) -> bool:
+def test_calculation(calculation: tuple(), include_concat: bool = False) -> bool:
     test_value, components = calculation
 
     # if sum(components) > test_value:
     #     return False
 
-    def generate_permutations(n):
-        return [list(p) for p in product(["add", "mul"], repeat=n)]
+    def generate_permutations(n, include_concat=False):
+        if include_concat:
+            return [list(p) for p in product(["add", "mul", "con"], repeat=n)]
+        else:
+            return [list(p) for p in product(["add", "mul"], repeat=n)]
 
     num_calculations = len(components) - 1
-    permutations = generate_permutations(num_calculations)
+    permutations = generate_permutations(num_calculations, include_concat)
 
     for series in permutations:
-        result = components[0]
-        current_component = 1
-        for operation in series:
-            if operation == "add":
-                result += components[current_component]
-            elif operation == "mul":
-                result *= components[current_component]
-            current_component += 1
+        temp_components = components.copy()
+        result = temp_components.pop(0)
+
+        while len(temp_components) > 0:
+            current_component = temp_components.pop(0)
+            current_operation = series.pop(0)
+
+            if current_operation == "add":
+                result += current_component
+            elif current_operation == "mul":
+                result *= current_component
+            elif current_operation == "con":
+                result = int(str(result) + str(current_component))
+
             if result > test_value:
                 continue
 
         if result == test_value:
-            logging.debug(f"Found result for {calculation}: {series}" )
+            # logging.debug(f"Found result for {calculation}: {series}" )
             return True
     
-    logging.debug(f"No solution for {calculation}" )
+    # logging.debug(f"No solution for {calculation}" )
     return False
 
 def solve_1(input: list) -> int:
@@ -52,7 +61,7 @@ def solve_1(input: list) -> int:
 
     output = 0
     for line in puzzle_input:
-        test_result = test_calculation((line))
+        test_result = test_calculation((line), include_concat=False)
         if test_result:
             output += line[0]
 
@@ -60,7 +69,15 @@ def solve_1(input: list) -> int:
 
 
 def solve_2(input: list) -> int:
-    pass
+    puzzle_input = parse_input(input)
+
+    output = 0
+    for line in puzzle_input:
+        test_result = test_calculation((line), include_concat=True)
+        if test_result:
+            output += line[0]
+
+    return output
 
 
 if __name__ == '__main__':
