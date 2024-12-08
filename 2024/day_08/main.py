@@ -27,16 +27,12 @@ def find_antinodes(coordinates: list, grid_size: tuple, harmonics: bool = False)
     max_y -= 1
 
     antinodes = defaultdict(bool)
-    for antenna in coordinates:
-        antinodes[antenna] = True
 
     for combination in combinations:
         node_1, node_2 = combination
-        nx1, ny1 = node_1
-        nx2, ny2 = node_2
 
-        dx = nx2 - nx1
-        dy = ny2 - ny1
+        dx = node_2[0] - node_1[0]
+        dy = node_2[1] - node_1[1]
 
         dx_original = dx
         dy_original = dy
@@ -44,28 +40,29 @@ def find_antinodes(coordinates: list, grid_size: tuple, harmonics: bool = False)
         # logging.debug(f"COMBINATION: {combination}")
 
         while -max_x <= dx <= max_x and -max_y <= dy <= max_y:
-            antinode_1x = nx1 - dx
-            antinode_1y = ny1 - dy
-
-            antinode_2x = nx2 + dx
-            antinode_2y = ny2 + dy
+            antinode_1 = (node_1[0] - dx, node_1[1] - dy)
+            antinode_2 = (node_2[0] + dx, node_2[1] + dy)
 
             # logging.debug(f"DELTA: {(dx, dy)}")
             # logging.debug(f"Checking {(antinode_1x, antinode_1y)} and {(antinode_2x, antinode_2y)}")
 
-            if 0 <= antinode_1x <= max_x and 0 <= antinode_1y <= max_y:
-                antinodes[(antinode_1x, antinode_1y)] = True
-                # logging.debug(f"Found antinode at {(antinode_1x, antinode_1y)}")
+            if 0 <= antinode_1[0] <= max_x and 0 <= antinode_1[1] <= max_y:
+                antinodes[antinode_1] = True
+                # logging.debug(f"Found antinode at {antinode_1}")
 
-            if 0 <= antinode_2x <= max_x and 0 <= antinode_2y <= max_y:
-                antinodes[(antinode_2x, antinode_2y)] = True
-                # logging.debug(f"Found antinode at {(antinode_2x, antinode_2y)}")
+            if 0 <= antinode_2[0] <= max_x and 0 <= antinode_2[1] <= max_y:
+                antinodes[antinode_2] = True
+                # logging.debug(f"Found antinode at {antinode_2}")
 
             if not harmonics:
                 break
 
             dx += dx_original
             dy += dy_original
+
+    if harmonics:
+        for antenna in coordinates:
+            antinodes[antenna] = True
 
     return antinodes
 
