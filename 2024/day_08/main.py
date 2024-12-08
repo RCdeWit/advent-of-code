@@ -20,13 +20,15 @@ def parse_input(input: list) -> (list, defaultdict):
 
     return grid, dict(antennas)
 
-def find_antinodes(coordinates: list, grid_size: tuple) -> list:
+def find_antinodes(coordinates: list, grid_size: tuple, harmonics: bool = False) -> list:
     combinations = list(itertools.combinations(coordinates, 2))
     max_x, max_y = grid_size
     max_x -= 1
     max_y -= 1
 
     antinodes = defaultdict(bool)
+    for antenna in coordinates:
+        antinodes[antenna] = True
 
     for combination in combinations:
         node_1, node_2 = combination
@@ -36,20 +38,36 @@ def find_antinodes(coordinates: list, grid_size: tuple) -> list:
         dx = nx2 - nx1
         dy = ny2 - ny1
 
-        antinode_1x = nx1 - dx
-        antinode_1y = ny1 - dy
+        dx_original = dx
+        dy_original = dy
 
-        antinode_2x = nx2 + dx
-        antinode_2y = ny2 + dy
+        # logging.debug(f"COMBINATION: {combination}")
 
-        if 0 <= antinode_1x <= max_x and 0 <= antinode_1y <= max_y:
-            antinodes[(antinode_1x, antinode_1y)] = True
+        while -max_x <= dx <= max_x and -max_y <= dy <= max_y:
+            antinode_1x = nx1 - dx
+            antinode_1y = ny1 - dy
 
-        if 0 <= antinode_2x <= max_x and 0 <= antinode_2y <= max_y:
-            antinodes[(antinode_2x, antinode_2y)] = True
+            antinode_2x = nx2 + dx
+            antinode_2y = ny2 + dy
+
+            # logging.debug(f"DELTA: {(dx, dy)}")
+            # logging.debug(f"Checking {(antinode_1x, antinode_1y)} and {(antinode_2x, antinode_2y)}")
+
+            if 0 <= antinode_1x <= max_x and 0 <= antinode_1y <= max_y:
+                antinodes[(antinode_1x, antinode_1y)] = True
+                # logging.debug(f"Found antinode at {(antinode_1x, antinode_1y)}")
+
+            if 0 <= antinode_2x <= max_x and 0 <= antinode_2y <= max_y:
+                antinodes[(antinode_2x, antinode_2y)] = True
+                # logging.debug(f"Found antinode at {(antinode_2x, antinode_2y)}")
+
+            if not harmonics:
+                break
+
+            dx += dx_original
+            dy += dy_original
 
     return antinodes
-
 
 def solve_1(input: list) -> int:
     grid, antennas = parse_input(input)
@@ -65,7 +83,16 @@ def solve_1(input: list) -> int:
 
 
 def solve_2(input: list) -> int:
-    pass
+    grid, antennas = parse_input(input)
+    grid_size = (len(grid[0]), len(grid))
+    result = defaultdict(bool)
+    for antenna_type in antennas.keys():
+        antinodes = find_antinodes(antennas[antenna_type], grid_size, True)
+
+        result = result | antinodes
+
+    # logging.debug(antinodes)
+    return len(result)
 
 
 if __name__ == '__main__':
