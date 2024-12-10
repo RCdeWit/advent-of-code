@@ -25,8 +25,9 @@ with open(input_file) as f:
 
 
 def create_empty_map(width, height):
-    map = [[0 for x in range(width)] for y in range(height)] 
+    map = [[0 for x in range(width)] for y in range(height)]
     return map
+
 
 # Take one step at a time, return new map
 def move_rope_along_map(map, direction, head, tail):
@@ -66,28 +67,27 @@ def move_rope_along_map(map, direction, head, tail):
     # map[head_y][head_x] = 1
     # map[tail_y][tail_x] = 1
 
-    return(map, [head_y, head_x], [tail_y, tail_x])
+    return (map, [head_y, head_x], [tail_y, tail_x])
+
 
 # Do it for a sequence of steps
 # Trace where the tail has been
 def trace_path_rope_along_map(map, input, head, tail):
     for line in input:
-            direction = line[0]
-            distance = int(line[1])
+        direction = line[0]
+        distance = int(line[1])
 
-            for i in range(0, distance):
-                result = move_rope_along_map(
-                            map=map
-                            , direction=direction
-                            , head=head
-                            , tail=tail
-                            )
+        for i in range(0, distance):
+            result = move_rope_along_map(
+                map=map, direction=direction, head=head, tail=tail
+            )
 
-                map = result[0]
-                head = result[1]
-                tail = result[2]
+            map = result[0]
+            head = result[1]
+            tail = result[2]
 
-    return(map)
+    return map
+
 
 def sum_map(map):
     result = 0
@@ -96,7 +96,8 @@ def sum_map(map):
             if x == 1:
                 result = result + 1
 
-    return(result)
+    return result
+
 
 def move_head(head, direction):
     head_x = head[1]
@@ -112,7 +113,8 @@ def move_head(head, direction):
         case "D":
             head_y = head_y - 1
 
-    return([head_y, head_x])
+    return [head_y, head_x]
+
 
 def move_tail(head, tail):
     head_x = head[1]
@@ -131,7 +133,7 @@ def move_tail(head, tail):
         tail_y = tail_y + delta_y
         tail_x = tail_x + delta_x
 
-    return([tail_y, tail_x])
+    return [tail_y, tail_x]
 
 
 def move_tail(head, tail):
@@ -140,7 +142,10 @@ def move_tail(head, tail):
     elif abs(head[1] - tail[1]) > 1 and head[0] == tail[0]:
         return [tail[0], tail[1] + (1 if head[1] > tail[1] else -1)]
     elif abs(head[0] - tail[0]) + abs(head[1] - tail[1]) > 2:
-        return [tail[0] + (1 if head[0] > tail[0] else -1), tail[1] + (1 if head[1] > tail[1] else -1)]
+        return [
+            tail[0] + (1 if head[0] > tail[0] else -1),
+            tail[1] + (1 if head[1] > tail[1] else -1),
+        ]
     else:
         return tail
 
@@ -151,7 +156,7 @@ match question:
 
         # Not the prettiest, but create a big enough map and start in the middle
         dimensions = 500
-        map = create_empty_map(dimensions*2, dimensions*2)
+        map = create_empty_map(dimensions * 2, dimensions * 2)
         map[dimensions][dimensions] = 1
         head = [dimensions, dimensions]
         tail = [dimensions, dimensions]
@@ -165,7 +170,7 @@ match question:
 
     case "2":
         dimensions = 500
-        map = create_empty_map(dimensions*2, dimensions*2)
+        map = create_empty_map(dimensions * 2, dimensions * 2)
         map[dimensions][dimensions] = 1
         head = [dimensions, dimensions]
         tails = {knot: [dimensions, dimensions] for knot in range(0, 9)}
@@ -180,7 +185,7 @@ match question:
                     if k == 0:
                         preceding_knot = head
                     else:
-                        preceding_knot = tails[k-1]
+                        preceding_knot = tails[k - 1]
                     new_pos = move_tail(preceding_knot, loc)
                     tails[k] = new_pos
 
@@ -198,6 +203,6 @@ match question:
         #         else:
         #             display += "8"
 
-            # print(display)
+        # print(display)
 
         print(sum_map(map))

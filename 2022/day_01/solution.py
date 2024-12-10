@@ -13,6 +13,7 @@ question = args.question
 with open(input_file) as f:
     input = list(f.read().splitlines())
 
+
 # Sum lines of calories by elf
 def sum_elves(input):
     sum = 0
@@ -26,7 +27,8 @@ def sum_elves(input):
             sum = sum + int(l)
 
     elves.append(sum)
-    return(elves)
+    return elves
+
 
 # Find highest calory elf
 def find_highest_calory_elf(elves):
@@ -34,6 +36,7 @@ def find_highest_calory_elf(elves):
     max_calories = max(calories_by_elf)
 
     return (index_max_calories, max_calories)
+
 
 # Print results depending on the question (1 or 2)
 match question:

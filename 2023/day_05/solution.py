@@ -2,6 +2,7 @@ import argparse
 import logging
 import sys
 
+
 def parse_input(input: list):
     seeds = [int(seed) for seed in input[0].split(":")[1][1:].split(" ")]
     # logging.debug(seeds)
@@ -27,12 +28,13 @@ def parse_input(input: list):
 
     return seeds, maps
 
+
 def parse_seeds_2(input: str):
     seeds = [int(seed) for seed in input.split(":")[1][1:].split(" ")]
     ranges = []
     i = 0
     while i < len(seeds):
-        ranges.append(tuple([seeds[i], seeds[i] + seeds[i+1]]))
+        ranges.append(tuple([seeds[i], seeds[i] + seeds[i + 1]]))
         i += 2
 
     return ranges
@@ -41,10 +43,11 @@ def parse_seeds_2(input: str):
 def map_source_to_dest(origin: int, map_name: str, maps: dict):
     map_current = maps[map_name]
     for key, offset in map_current.items():
-        if origin in range(key[0], key[1]+1):
+        if origin in range(key[0], key[1] + 1):
             return origin + offset
-    
+
     return origin
+
 
 def map_source_to_dest_2(origin: tuple, map_name: str, maps: dict):
     map_current = maps[map_name]
@@ -65,11 +68,12 @@ def map_source_to_dest_2(origin: tuple, map_name: str, maps: dict):
         elif origin[1] <= key[1]:
             # logging.debug("TO LEFT")
             yield tuple([key[0] + offset, origin[1] + offset])
-            origin = tuple([origin[0], key[0]-1])
+            origin = tuple([origin[0], key[0] - 1])
             map_source_to_dest_2(origin, map_name, maps)
 
     if origin != (-1, -1):
         yield origin
+
 
 def seeds_to_locations(seeds: list, maps: dict):
     destinations = []
@@ -87,10 +91,12 @@ def seeds_to_locations(seeds: list, maps: dict):
 
     return destinations
 
+
 def solve_1(input):
     seeds, maps = parse_input(input)
     destinations = seeds_to_locations(seeds, maps)
     return min(destinations)
+
 
 def solve_2(input):
     seeds, maps = parse_input(input)
@@ -109,11 +115,12 @@ def solve_2(input):
 
     return sorted([sr[0] for sr in seed_ranges])[0]
 
-if __name__ == '__main__':
-     # Parse CLI arguments
+
+if __name__ == "__main__":
+    # Parse CLI arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("-q", "--question", required=True)
-    parser.add_argument("-i", "--input", required=False, default='input.txt')
+    parser.add_argument("-i", "--input", required=False, default="input.txt")
     args = parser.parse_args()
 
     input_file = args.input
@@ -130,7 +137,9 @@ if __name__ == '__main__':
     handler = logging.StreamHandler(sys.stdout)
     handler.setLevel(logging.DEBUG)
 
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
     handler.setFormatter(formatter)
     root.addHandler(handler)
 

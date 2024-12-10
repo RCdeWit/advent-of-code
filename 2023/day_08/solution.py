@@ -1,7 +1,8 @@
 import argparse
 import logging
-import sys
 import math
+import sys
+
 
 def parse_input(input: list):
     directions = input[0]
@@ -17,6 +18,7 @@ def parse_input(input: list):
 
     return directions, nodes
 
+
 def traverse_nodes(nodes: dict, start: str, directions: str):
     i = 0
     while start != "ZZZ":
@@ -29,6 +31,7 @@ def traverse_nodes(nodes: dict, start: str, directions: str):
         i += 1
 
     return i
+
 
 def traverse_nodes_2(nodes: dict, start: str, directions: str):
     i = 0
@@ -43,10 +46,12 @@ def traverse_nodes_2(nodes: dict, start: str, directions: str):
 
     return i
 
+
 def solve_1(input):
     directions, nodes = parse_input(input)
     solution = traverse_nodes(nodes, "AAA", directions)
     return solution
+
 
 def solve_2(input):
     directions, nodes = parse_input(input)
@@ -61,11 +66,12 @@ def solve_2(input):
     lcm = math.lcm(*steps_per_loop)
     return lcm
 
-if __name__ == '__main__':
-     # Parse CLI arguments
+
+if __name__ == "__main__":
+    # Parse CLI arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("-q", "--question", required=True)
-    parser.add_argument("-i", "--input", required=False, default='input.txt')
+    parser.add_argument("-i", "--input", required=False, default="input.txt")
     args = parser.parse_args()
 
     input_file = args.input
@@ -82,7 +88,9 @@ if __name__ == '__main__':
     handler = logging.StreamHandler(sys.stdout)
     handler.setLevel(logging.DEBUG)
 
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
     handler.setFormatter(formatter)
     root.addHandler(handler)
 

@@ -1,17 +1,18 @@
-with open('input.txt') as f:
+with open("input.txt") as f:
     input = f.read()
 
 # Parse input
-x = input.split(', ')[0]
-y = input.split(', ')[1]
+x = input.split(", ")[0]
+y = input.split(", ")[1]
 
-x_min = int(x.split('..')[0][2:])
-x_max = int(x.split('..')[1])
+x_min = int(x.split("..")[0][2:])
+x_max = int(x.split("..")[1])
 
-y_min = int(y.split('..')[0][2:])
-y_max = int(y.split('..')[1])
+y_min = int(y.split("..")[0][2:])
+y_max = int(y.split("..")[1])
 
 target = [[x_min, x_max], [y_min, y_max]]
+
 
 def cycle_step_probe(probe):
     x_new = probe["position"][0] + probe["velocity"][0]
@@ -32,6 +33,7 @@ def cycle_step_probe(probe):
 
     return probe
 
+
 def check_hit_probe(probe):
     target_x_min = min(probe["target"][0])
     target_x_max = max(probe["target"][0])
@@ -41,12 +43,18 @@ def check_hit_probe(probe):
     position_x = probe["position"][0]
     position_y = probe["position"][1]
 
-    if target_x_max >= position_x >= target_x_min and target_y_max >= position_y >= target_y_min:
+    if (
+        target_x_max >= position_x >= target_x_min
+        and target_y_max >= position_y >= target_y_min
+    ):
         return "HIT"
-    elif position_x > target_x_max or (probe["velocity"][0] == 0 and position_y < target_y_min):
+    elif position_x > target_x_max or (
+        probe["velocity"][0] == 0 and position_y < target_y_min
+    ):
         return "OVERSHOT"
     else:
         return "NOHIT"
+
 
 def calculate_trajectory(probe, max_cycles):
     high_point = 0
@@ -58,15 +66,33 @@ def calculate_trajectory(probe, max_cycles):
         high_point = max(probe["position"][1], high_point)
 
         if result_cycle == "HIT":
-            return {"result": "hit", "position": probe["position"], "cycles": i+1, "high_point": high_point}
+            return {
+                "result": "hit",
+                "position": probe["position"],
+                "cycles": i + 1,
+                "high_point": high_point,
+            }
         elif result_cycle == "OVERSHOT":
-            return {"result": "overshot", "position": probe["position"], "cycles": i+1, "high_point": high_point}
+            return {
+                "result": "overshot",
+                "position": probe["position"],
+                "cycles": i + 1,
+                "high_point": high_point,
+            }
 
         i += 1
 
-    return  {"result": "max cycles reached", "position": probe["position"], "cycles": i+1, "high_point": high_point}
+    return {
+        "result": "max cycles reached",
+        "position": probe["position"],
+        "cycles": i + 1,
+        "high_point": high_point,
+    }
 
-def find_hitting_trajectory_with_highest_point(max_cycles, max_velocity_x, max_velocity_y):
+
+def find_hitting_trajectory_with_highest_point(
+    max_cycles, max_velocity_x, max_velocity_y
+):
     highest_trajectory = {"high_point": -1}
 
     for x in range(min_velocity_x, max_velocity_x):
@@ -84,6 +110,7 @@ def find_hitting_trajectory_with_highest_point(max_cycles, max_velocity_x, max_v
                     highest_trajectory = trajectory
 
     return highest_trajectory
+
 
 def find_all_hitting_velocities(max_cycles, max_velocity_x, max_velocity_y):
     output = []

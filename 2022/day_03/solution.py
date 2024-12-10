@@ -13,6 +13,7 @@ question = args.question
 with open(input_file) as f:
     input = list(f.read().splitlines())
 
+
 # Change a letter to a value (a-z: 1-26; A-Z:27-52)
 def parse_letter_to_value(letter):
     ascii = ord(letter)
@@ -26,6 +27,7 @@ def parse_letter_to_value(letter):
     else:
         print(f"Invalid letter: {letter}")
 
+
 def parse_rugsack(rugsack):
     rugsack_parsed = []
 
@@ -33,6 +35,7 @@ def parse_rugsack(rugsack):
         rugsack_parsed.append(parse_letter_to_value(i))
 
     return rugsack_parsed
+
 
 # Take a rugsack, parse values, and split into compartments
 def split_into_compartments(rugsack):
@@ -42,7 +45,8 @@ def split_into_compartments(rugsack):
     compartment_1 = rugsack[0:half]
     compartment_2 = rugsack[half:full]
 
-    return([compartment_1, compartment_2])
+    return [compartment_1, compartment_2]
+
 
 def find_intersection_compartments(compartment_1, compartment_2):
     intersection = set(compartment_1).intersection(compartment_2)
@@ -60,7 +64,7 @@ match question:
             intersection = find_intersection_compartments(rugsack[0], rugsack[1])
 
             result = result + max(intersection)
-        
+
         print(result)
 
     case "2":
@@ -74,9 +78,13 @@ match question:
         i = 0
         while i < len(rugsack_list):
             # First find intersection between 1 and 2
-            intersection = find_intersection_compartments(rugsack_list[i], rugsack_list[i+1])
+            intersection = find_intersection_compartments(
+                rugsack_list[i], rugsack_list[i + 1]
+            )
             # Then intersection with previous result and 3
-            intersection = find_intersection_compartments(intersection, rugsack_list[i+2])
+            intersection = find_intersection_compartments(
+                intersection, rugsack_list[i + 2]
+            )
 
             result = result + max(intersection)
 

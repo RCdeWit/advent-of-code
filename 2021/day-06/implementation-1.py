@@ -1,5 +1,5 @@
-with open('input.txt') as f:
-    list_of_fish = list(map(int, f.read().split(',')))
+with open("input.txt") as f:
+    list_of_fish = list(map(int, f.read().split(",")))
 
 # Remove trailing newline
 # list_of_fish = list_of_fish[:-1]

@@ -1,5 +1,6 @@
-with open('input.txt') as f:
-    list_of_crabs = list(map(int, f.read().split(',')))
+with open("input.txt") as f:
+    list_of_crabs = list(map(int, f.read().split(",")))
+
 
 def get_summed_fuel_from_line(list, line):
     total_fuel = 0
@@ -8,7 +9,7 @@ def get_summed_fuel_from_line(list, line):
         distance = abs(line - val)
 
         # Gaussian summation
-        total_fuel += distance * (distance + 1)/2
+        total_fuel += distance * (distance + 1) / 2
 
     return total_distance
 

@@ -1,7 +1,8 @@
 import statistics
 
-with open('input.txt') as f:
+with open("input.txt") as f:
     input = f.read().splitlines()
+
 
 def get_opposite_character(char):
     open_chars = ["(", "[", "{", "<"]
@@ -12,8 +13,10 @@ def get_opposite_character(char):
     else:
         return open_chars[close_chars.index(char)]
 
+
 def is_legitimate_combination(open, close):
     return open == get_opposite_character(close)
+
 
 def parse_line(line):
     open_chars = ["(", "[", "{", "<"]
@@ -34,7 +37,8 @@ def parse_line(line):
     for char in reversed(opened):
         output.append(get_opposite_character(char))
 
-    return(output)
+    return output
+
 
 def score_char(char):
     if char == ")":
@@ -46,6 +50,7 @@ def score_char(char):
     elif char == ">":
         return 4
 
+
 def score_completion_line(completion):
     score = 0
     for char in completion:
@@ -53,6 +58,7 @@ def score_completion_line(completion):
         score += score_char(char)
 
     return score
+
 
 results = []
 for line in input:

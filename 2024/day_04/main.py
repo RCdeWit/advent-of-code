@@ -2,6 +2,7 @@ import argparse
 import logging
 import sys
 
+
 def parse_input(input: list):
     grid = []
     for line in input:
@@ -10,6 +11,7 @@ def parse_input(input: list):
             row.append(char)
         grid.append(row)
     return grid
+
 
 def find_letter(grid: list, letter: str) -> list:
     results = []
@@ -20,14 +22,22 @@ def find_letter(grid: list, letter: str) -> list:
 
     return results
 
+
 def find_viable_directions(grid: list, coordinates: tuple, offset: int) -> list:
     x, y = coordinates
     max_y = len(grid) - 1
     max_x = len(grid[0]) - 1
 
-    directions = {"nw": (-1, -1), "n": (0, -1), "ne": (1, -1),
-                  "w": (-1, 0), "e": (1, 0),
-                  "sw": (-1, 1), "s": (0, 1), "se": (1, 1)}
+    directions = {
+        "nw": (-1, -1),
+        "n": (0, -1),
+        "ne": (1, -1),
+        "w": (-1, 0),
+        "e": (1, 0),
+        "sw": (-1, 1),
+        "s": (0, 1),
+        "se": (1, 1),
+    }
 
     if x < offset:
         directions.pop("nw", None)
@@ -48,6 +58,7 @@ def find_viable_directions(grid: list, coordinates: tuple, offset: int) -> list:
 
     return directions
 
+
 def count_xmas_from_x(grid: list, coordinates: tuple) -> int:
     viable_directions = find_viable_directions(grid, coordinates, 3)
     x, y = coordinates
@@ -56,13 +67,16 @@ def count_xmas_from_x(grid: list, coordinates: tuple) -> int:
     for direction in viable_directions.values():
         dx, dy = direction
 
-        if grid[y + dy][x + dx] == 'M' \
-            and grid[y + 2*dy][x + 2*dx] == 'A' \
-            and grid[y + 3*dy][x + 3*dx] == 'S':
+        if (
+            grid[y + dy][x + dx] == "M"
+            and grid[y + 2 * dy][x + 2 * dx] == "A"
+            and grid[y + 3 * dy][x + 3 * dx] == "S"
+        ):
             count += 1
             logging.debug(f"Found XMAS for {direction} from x={x}, y={y}")
 
     return count
+
 
 def count_xmas_from_a(grid: list, coordinates: tuple) -> int:
     viable_directions = find_viable_directions(grid, coordinates, 1)
@@ -71,17 +85,20 @@ def count_xmas_from_a(grid: list, coordinates: tuple) -> int:
     if not set(["ne", "nw", "se", "sw"]).issubset(set(viable_directions.keys())):
         return 0
 
-    if grid[y-1][x-1] == grid[y+1][x+1]:
+    if grid[y - 1][x - 1] == grid[y + 1][x + 1]:
         return 0
-    elif grid[y+1][x-1] == grid[y-1][x+1]:
+    elif grid[y + 1][x - 1] == grid[y - 1][x + 1]:
         return 0
-    elif grid[y-1][x-1] in ("M", "S") \
-        and grid[y-1][x+1] in ("M", "S") \
-        and grid[y+1][x-1] in ("M", "S") \
-        and grid[y+1][x+1] in ("M", "S"):
+    elif (
+        grid[y - 1][x - 1] in ("M", "S")
+        and grid[y - 1][x + 1] in ("M", "S")
+        and grid[y + 1][x - 1] in ("M", "S")
+        and grid[y + 1][x + 1] in ("M", "S")
+    ):
         return 1
 
     return 0
+
 
 def solve_1(input: list) -> int:
     grid = parse_input(input)
@@ -90,6 +107,7 @@ def solve_1(input: list) -> int:
     result = sum(map(lambda x: count_xmas_from_x(grid, x), x_coordinates))
     return result
 
+
 def solve_2(input: list) -> int:
     grid = parse_input(input)
     a_coordinates = find_letter(grid, "A")
@@ -97,11 +115,12 @@ def solve_2(input: list) -> int:
     result = sum(map(lambda x: count_xmas_from_a(grid, x), a_coordinates))
     return result
 
-if __name__ == '__main__':
-     # Parse CLI arguments
+
+if __name__ == "__main__":
+    # Parse CLI arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("-q", "--question", required=True)
-    parser.add_argument("-i", "--input", required=False, default='input.txt')
+    parser.add_argument("-i", "--input", required=False, default="input.txt")
     args = parser.parse_args()
 
     input_file = args.input
@@ -118,7 +137,9 @@ if __name__ == '__main__':
     handler = logging.StreamHandler(sys.stdout)
     handler.setLevel(logging.DEBUG)
 
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
     handler.setFormatter(formatter)
     root.addHandler(handler)
 

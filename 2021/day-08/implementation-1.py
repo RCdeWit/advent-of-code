@@ -1,11 +1,11 @@
-with open('input.txt') as f:
+with open("input.txt") as f:
     input = f.read().splitlines()
 
 values = []
 
 for i, line in enumerate(input):
-    signal = input[i].split(' | ')[0].split(' ')
-    output = input[i].split(' | ')[1].split(' ')
+    signal = input[i].split(" | ")[0].split(" ")
+    output = input[i].split(" | ")[1].split(" ")
 
     values.append([signal, output])
 
@@ -29,7 +29,6 @@ for i, output in enumerate(values):
             None
         elif len(number) == 7:
             count_numbers[8] += 1
-
 
         # print(number)
 

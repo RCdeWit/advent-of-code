@@ -30,6 +30,7 @@ with open(input_file) as f:
 
     input = input_parsed
 
+
 # See if one section fully contains the other section
 def section_fully_contains_other_section(section_1, section_2):
     start_1 = section_1[0]
@@ -43,6 +44,7 @@ def section_fully_contains_other_section(section_1, section_2):
         return True
     else:
         return False
+
 
 # See if two sections overlap
 def section_partially_contains_other_section(section_1, section_2):

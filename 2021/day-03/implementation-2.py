@@ -13,6 +13,7 @@ def get_most_common_value_in_column(input, column):
     else:
         return 0
 
+
 def reduce_list_by_common_columns(input, metric):
     output = input
 
@@ -29,9 +30,10 @@ def reduce_list_by_common_columns(input, metric):
         output = temp_list
 
         if len(output) == 1:
-            return(output)[0]
+            return (output)[0]
 
-with open('input.txt') as f:
+
+with open("input.txt") as f:
     diagnostics = list(f.read().splitlines())
 
 oxygen = int(reduce_list_by_common_columns(diagnostics, "most"), 2)

@@ -2,17 +2,19 @@ import argparse
 import logging
 import sys
 
+
 def solve_1(input):
     digits_only = []
     for line in input:
-        digits_only.append(''.join(char for char in line if char in "0123456789"))
+        digits_only.append("".join(char for char in line if char in "0123456789"))
     logging.debug(digits_only)
 
-    calibrations = [int(line[0]+line[-1]) for line in digits_only]
+    calibrations = [int(line[0] + line[-1]) for line in digits_only]
     logging.debug(calibrations)
 
     result = sum(calibrations)
     return result
+
 
 def solve_2(input):
     digits_only = []
@@ -20,11 +22,12 @@ def solve_2(input):
         digits_only.append(list(parse_digits(line)))
     logging.debug(digits_only)
 
-    calibrations = [int(line[0]+line[-1]) for line in digits_only]
+    calibrations = [int(line[0] + line[-1]) for line in digits_only]
     logging.debug(calibrations)
 
     result = sum(calibrations)
     return result
+
 
 def parse_digits(line: str):
     if len(line) == 0:
@@ -52,11 +55,11 @@ def parse_digits(line: str):
     yield from parse_digits(line[1:])
 
 
-if __name__ == '__main__':
-     # Parse CLI arguments
+if __name__ == "__main__":
+    # Parse CLI arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("-q", "--question", required=True)
-    parser.add_argument("-i", "--input", required=False, default='input.txt')
+    parser.add_argument("-i", "--input", required=False, default="input.txt")
     args = parser.parse_args()
 
     input_file = args.input
@@ -73,7 +76,9 @@ if __name__ == '__main__':
     handler = logging.StreamHandler(sys.stdout)
     handler.setLevel(logging.DEBUG)
 
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
     handler.setFormatter(formatter)
     root.addHandler(handler)
 

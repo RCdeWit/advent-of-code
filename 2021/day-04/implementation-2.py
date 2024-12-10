@@ -1,5 +1,5 @@
 # First process input data
-with open('input.txt') as f:
+with open("input.txt") as f:
     input = f.read().splitlines()
 
 # Save input to list of balls and remove from bingo cards to be processed
@@ -37,6 +37,7 @@ for i, line in enumerate(input):
 # Append last card without trailing new line
 list_of_cards.append(card)
 
+
 # Function to cross off a number on a bingo card
 def cross_off_number(bingo_card, number):
     for i, row in enumerate(bingo_card):
@@ -45,6 +46,7 @@ def cross_off_number(bingo_card, number):
                 bingo_card[i][j] = -1
 
     return bingo_card
+
 
 # Function to check whether a given card gets a bingo
 def check_bingo_card(bingo_card):
@@ -61,10 +63,13 @@ def check_bingo_card(bingo_card):
 
     # If one of the rows or columns is still true, it's a bingo!
     return max(bingo_row) or max(bingo_col)
+
+
 #
 # test_card_row = [[-1, -1, -1, -1, -1], [8, 2, 23, 4, 24], [21, 9, 14, 16, 7], [6, 10, 3, 18, 5], [1, 12, 20, 15, 19]]
 # test_card_col = [[22, -1, 17, 11, 0], [8, -1, 23, 4, 24], [21, -1, 14, 16, 7], [6, -1, 3, 18, 5], [1, -1, 20, 15, 19]]
 # print(check_bingo_card(test_card_row, test_card_col))
+
 
 def sum_remaining_cells(bingo_card):
     sum = 0
@@ -77,6 +82,7 @@ def sum_remaining_cells(bingo_card):
                 sum += bingo_card[r][c]
 
     return sum
+
 
 # List to keep track of which bingo cards have gotten a bingo already
 winning_cards = [False] * len(list_of_cards)
@@ -93,10 +99,12 @@ for b in range(len(balls)):
             winning_cards[c] = True
 
     # Once we have one card remaining, we know which card is the last to win
-    if sum(winning_cards) == len(winning_cards)-1:
+    if sum(winning_cards) == len(winning_cards) - 1:
         final_card = winning_cards.index(False)
     # And once that card wins, we can calculate the answer using the final ball
     elif sum(winning_cards) == len(winning_cards):
-        print(f"Last winning card: {final_card+1}, At ball: {balls[b]}, Remainder card: {sum_remaining_cells(list_of_cards[final_card])}")
+        print(
+            f"Last winning card: {final_card+1}, At ball: {balls[b]}, Remainder card: {sum_remaining_cells(list_of_cards[final_card])}"
+        )
         print(f"Answer: {balls[b] * sum_remaining_cells(list_of_cards[final_card])}")
         exit()

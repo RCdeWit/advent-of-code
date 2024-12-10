@@ -2,8 +2,8 @@ import argparse
 import logging
 import sys
 import time
-
 from itertools import product
+
 
 def parse_input(input: list):
     output = []
@@ -15,6 +15,7 @@ def parse_input(input: list):
 
     # logging.debug(output)
     return output
+
 
 def test_calculation(calculation: tuple(), include_concat: bool = False) -> bool:
     test_value, components = calculation
@@ -52,9 +53,10 @@ def test_calculation(calculation: tuple(), include_concat: bool = False) -> bool
         if result == test_value:
             # logging.debug(f"Found result for {calculation}: {series}" )
             return True
-    
+
     # logging.debug(f"No solution for {calculation}" )
     return False
+
 
 def solve_1(input: list) -> int:
     puzzle_input = parse_input(input)
@@ -80,11 +82,11 @@ def solve_2(input: list) -> int:
     return output
 
 
-if __name__ == '__main__':
-     # Parse CLI arguments
+if __name__ == "__main__":
+    # Parse CLI arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("-q", "--question", required=True)
-    parser.add_argument("-i", "--input", required=False, default='input.txt')
+    parser.add_argument("-i", "--input", required=False, default="input.txt")
     args = parser.parse_args()
 
     input_file = args.input
@@ -101,7 +103,9 @@ if __name__ == '__main__':
     handler = logging.StreamHandler(sys.stdout)
     handler.setLevel(logging.DEBUG)
 
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
     handler.setFormatter(formatter)
     root.addHandler(handler)
 

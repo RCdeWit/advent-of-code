@@ -14,6 +14,7 @@ question = args.question
 with open(input_file) as f:
     input = list(f.read().splitlines())
 
+
 def parse_input_to_file_system(input):
     file_system = {}
     path = []
@@ -39,16 +40,17 @@ def parse_input_to_file_system(input):
                     path.append(destination)
                     working_directory = working_directory[destination]
 
-        elif line.startswith('dir '):
-            dir_name = line.split(' ')[1]
+        elif line.startswith("dir "):
+            dir_name = line.split(" ")[1]
             working_directory[dir_name] = {}
         else:
-            file_name = line.split(' ')[1]
-            file_size = line.split(' ')[0]
+            file_name = line.split(" ")[1]
+            file_size = line.split(" ")[0]
 
             working_directory[file_name] = file_size
 
     return file_system
+
 
 def find_directory_size(input, current_directory=[], results={}):
     total = 0
@@ -63,13 +65,13 @@ def find_directory_size(input, current_directory=[], results={}):
             current_directory.append(key)
 
             # Recursively search directory
-            subtotal = find_directory_size(value, current_directory)['/']
+            subtotal = find_directory_size(value, current_directory)["/"]
             total = total + subtotal
 
             # Create distinct keys based on full paths
             path = "/"
             for dir in current_directory:
-                path = path + dir + '/'
+                path = path + dir + "/"
 
             results[path] = subtotal
 
@@ -77,9 +79,10 @@ def find_directory_size(input, current_directory=[], results={}):
             current_directory.pop()
 
         # Save total
-        results['/'] = total
+        results["/"] = total
 
-    return(results)
+    return results
+
 
 # Print results depending on the question (1 or 2)
 match question:
@@ -99,7 +102,7 @@ match question:
         directory_sizes = find_directory_size(file_system)
 
         # Calculate space needed for update
-        current_space_available = 70000000 - directory_sizes['/']
+        current_space_available = 70000000 - directory_sizes["/"]
         space_needed = 30000000
         space_to_clear = space_needed - current_space_available
 

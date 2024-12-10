@@ -26,7 +26,7 @@ def calculate_rate(method, input):
     return output_string
 
 
-with open('input.txt') as f:
+with open("input.txt") as f:
     diagnostics = list(f.read().splitlines())
 
 # Convert binary to decimal

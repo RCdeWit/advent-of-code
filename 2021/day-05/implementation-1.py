@@ -1,22 +1,23 @@
 import numpy
 
 # First process input data
-with open('input.txt') as f:
+with open("input.txt") as f:
     input = f.read().splitlines()
 
 list_of_lines = []
 
 # Parse input: first split into two coordinates, then split into X and Y
 for i, line in enumerate(input):
-    pos1 = input[i].split(' -> ')[0]
-    pos2 = input[i].split(' -> ')[1]
+    pos1 = input[i].split(" -> ")[0]
+    pos2 = input[i].split(" -> ")[1]
 
-    x1 = int(pos1.split(',')[0])
-    y1 = int(pos1.split(',')[1])
-    x2 = int(pos2.split(',')[0])
-    y2 = int(pos2.split(',')[1])
+    x1 = int(pos1.split(",")[0])
+    y1 = int(pos1.split(",")[1])
+    x2 = int(pos2.split(",")[0])
+    y2 = int(pos2.split(",")[1])
 
     list_of_lines.append([[x1, y1], [x2, y2]])
+
 
 def determine_grid_size(list_of_lines):
     max_x = 0
@@ -30,6 +31,7 @@ def determine_grid_size(list_of_lines):
                 max_y = line[p][1]
 
     return [max_x, max_y]
+
 
 def draw_line_in_matrix(matrix, line):
     output = matrix
@@ -70,7 +72,8 @@ def draw_line_in_matrix(matrix, line):
             else:
                 output[x1 + i][y1] += 1
 
-    return(output)
+    return output
+
 
 def count_overlaps_in_matrix(matrix):
     overlaps = 0
@@ -79,10 +82,16 @@ def count_overlaps_in_matrix(matrix):
             if matrix[x][y] >= 2:
                 overlaps += 1
 
-    return(overlaps)
+    return overlaps
+
 
 # Create empty matrix and start drawing lines
-matrix = numpy.zeros((determine_grid_size(list_of_lines)[0]+1, determine_grid_size(list_of_lines)[1]+1))
+matrix = numpy.zeros(
+    (
+        determine_grid_size(list_of_lines)[0] + 1,
+        determine_grid_size(list_of_lines)[1] + 1,
+    )
+)
 
 for line in list_of_lines:
     matrix = draw_line_in_matrix(matrix, line)

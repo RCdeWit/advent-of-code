@@ -1,4 +1,4 @@
-with open('input.txt') as f:
+with open("input.txt") as f:
     input = f.read().splitlines()
 
 heights = []
@@ -10,6 +10,7 @@ for line in input:
 
     heights.append(x)
 
+
 # X and Y are swapped in two dimensional array
 # Use dedicated function to avoid confusion
 def get_value_coordinate(map, coordinate):
@@ -20,6 +21,7 @@ def get_value_coordinate(map, coordinate):
         return 100
     else:
         return map[y][x]
+
 
 def get_adjacent_value(map, coordinate, direction):
     x = coordinate[0]
@@ -42,6 +44,7 @@ def get_adjacent_value(map, coordinate, direction):
 
     return adjacent_value
 
+
 def get_is_lowpoint(map, coordinate):
     x = coordinate[0]
     y = coordinate[1]
@@ -58,12 +61,13 @@ def get_is_lowpoint(map, coordinate):
 
     return is_lowpoint
 
+
 total_risk_level = 0
 for y, col in enumerate(heights):
     for x, val in enumerate(col):
         coordinate = [x, y]
         value = get_value_coordinate(heights, coordinate)
         if get_is_lowpoint(heights, coordinate):
-            total_risk_level += (value + 1)
+            total_risk_level += value + 1
 
 print(f"Total risk level: {total_risk_level}")

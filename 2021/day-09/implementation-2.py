@@ -1,4 +1,4 @@
-with open('input.txt') as f:
+with open("input.txt") as f:
     input = f.read().splitlines()
 
 heights = []
@@ -9,6 +9,7 @@ for line in input:
         x.append(int(digit))
 
     heights.append(x)
+
 
 # X and Y are swapped in two dimensional array
 # Use dedicated function to avoid confusion
@@ -21,6 +22,7 @@ def get_value_coordinate(map, coordinate):
         return 100
     else:
         return map[y][x]
+
 
 def get_adjacent_value(map, coordinate, direction):
     x = coordinate[0]
@@ -43,6 +45,7 @@ def get_adjacent_value(map, coordinate, direction):
 
     return adjacent_value
 
+
 def get_is_lowpoint(map, coordinate):
     x = coordinate[0]
     y = coordinate[1]
@@ -59,6 +62,7 @@ def get_is_lowpoint(map, coordinate):
             break
 
     return is_lowpoint
+
 
 def get_larger_neighbours(map, coordinate):
     x = coordinate[0]
@@ -82,6 +86,7 @@ def get_larger_neighbours(map, coordinate):
                 larger_neighbours.append([x - 1, y])
 
     return larger_neighbours
+
 
 def get_basin_size(map, low_point):
     basin_size = 1

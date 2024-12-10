@@ -26,12 +26,13 @@ with open(input_file) as f:
 
     packets.append(pair)
 
+
 def compare_pairs(left, right):
 
     # One side ran out of items
     if type(left) == list:
         if len(left) == 0:
-            return(True)
+            return True
         else:
             l = left.pop(0)
     else:
@@ -81,6 +82,7 @@ def compare_pairs(left, right):
         print("ERROR: this shouldn't happen")
         print(pair, type(l), type(r))
 
+
 # https://www.programiz.com/dsa/insertion-sort
 def insertion_sort(packets):
     for i in range(1, len(packets)):
@@ -92,10 +94,11 @@ def insertion_sort(packets):
                 print(key, i, j, packets[j + 1], packets[j])
             packets[j + 1] = packets[j]
             j = j - 1
-        
-        packets[j + 1 ] = key
+
+        packets[j + 1] = key
 
     return packets
+
 
 # Print results depending on the question (1 or 2)
 match question:
@@ -128,4 +131,4 @@ match question:
             if compare_pairs(deepcopy(packet), deepcopy([[6]])):
                 decoder_2 = decoder_2 + 1
 
-        print(decoder_1, decoder_2, decoder_1*decoder_2)
+        print(decoder_1, decoder_2, decoder_1 * decoder_2)

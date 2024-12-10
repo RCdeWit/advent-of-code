@@ -2,6 +2,7 @@ import argparse
 import logging
 import sys
 
+
 def parse_input(input: list, assignment: int):
     for line in input:
         hand, score = line.split(" ")
@@ -12,24 +13,24 @@ def parse_input(input: list, assignment: int):
                 hand_parsed += char
             else:
                 match char:
-                    case 'A':
-                        hand_parsed += 'Z'
-                    case 'K':
-                        hand_parsed += 'Y'
-                    case 'Q':
-                        hand_parsed += 'X'
-                    case 'J':
+                    case "A":
+                        hand_parsed += "Z"
+                    case "K":
+                        hand_parsed += "Y"
+                    case "Q":
+                        hand_parsed += "X"
+                    case "J":
                         if assignment == 1:
-                            hand_parsed += 'W'
+                            hand_parsed += "W"
                         elif assignment == 2:
-                            hand_parsed += '0'
+                            hand_parsed += "0"
                         else:
                             logging.error("Provide assignment")
-                    case 'T':
-                        hand_parsed += 'V'
-
+                    case "T":
+                        hand_parsed += "V"
 
         yield (hand_parsed, score)
+
 
 def evaluate_hand(hand: tuple):
     hand = sorted(hand[0])
@@ -52,7 +53,12 @@ def evaluate_hand(hand: tuple):
         aggregate = {}
         for card in distinct_cards:
             aggregate[card] = hand.count(card)
-        aggregate = [v for k, v in sorted(aggregate.items(), key=lambda item: item[1], reverse=True)]
+        aggregate = [
+            v
+            for k, v in sorted(
+                aggregate.items(), key=lambda item: item[1], reverse=True
+            )
+        ]
         if aggregate[0] == 3:
             # Three of a kind
             return (3, "three_of_a_kind")
@@ -66,11 +72,13 @@ def evaluate_hand(hand: tuple):
             logging.error("Mistake in hand parsing")
             return None
 
+
 def calculate_winnings(hands: list):
     winnings = 0
     for i, hand in enumerate(hands):
-        winnings += hand[1] *  (i+1)
+        winnings += hand[1] * (i + 1)
     return winnings
+
 
 def assign_joker(hand: tuple):
     hand = hand[0]
@@ -89,6 +97,7 @@ def assign_joker(hand: tuple):
     else:
         return None
 
+
 def solve_1(input):
     hands = list(parse_input(input, 1))
     parsed_hands = []
@@ -97,6 +106,7 @@ def solve_1(input):
     parsed_hands.sort()
     # logging.debug(parsed_hands)
     return calculate_winnings(parsed_hands)
+
 
 def solve_2(input):
     hands = list(parse_input(input, 2))
@@ -114,11 +124,12 @@ def solve_2(input):
     parsed_hands.sort()
     return calculate_winnings(parsed_hands)
 
-if __name__ == '__main__':
-     # Parse CLI arguments
+
+if __name__ == "__main__":
+    # Parse CLI arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("-q", "--question", required=True)
-    parser.add_argument("-i", "--input", required=False, default='input.txt')
+    parser.add_argument("-i", "--input", required=False, default="input.txt")
     args = parser.parse_args()
 
     input_file = args.input
@@ -135,7 +146,9 @@ if __name__ == '__main__':
     handler = logging.StreamHandler(sys.stdout)
     handler.setLevel(logging.DEBUG)
 
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
     handler.setFormatter(formatter)
     root.addHandler(handler)
 

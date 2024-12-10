@@ -1,5 +1,6 @@
-with open('input.txt') as f:
+with open("input.txt") as f:
     input = f.read().splitlines()
+
 
 def decode_hex_to_binary(string):
     output = ""
@@ -38,7 +39,8 @@ def decode_hex_to_binary(string):
         elif char == "F":
             output += "1111"
 
-    return(output)
+    return output
+
 
 def split_packages(binary, threshold, mode="total_length_subpackets"):
     output = []
@@ -50,7 +52,7 @@ def split_packages(binary, threshold, mode="total_length_subpackets"):
     remaining_binary = binary[position:]
 
     if mode == "total_length_subpackets":
-        while position < threshold: # HIER GAAT IETS MIS
+        while position < threshold:  # HIER GAAT IETS MIS
             package_n = extract_information_from_binary(remaining_binary)
             output.append(package_n)
             position += package_n["length"]
@@ -64,6 +66,7 @@ def split_packages(binary, threshold, mode="total_length_subpackets"):
             remaining_binary = binary[position:]
 
     return output
+
 
 def extract_information_from_binary(binary):
     output = {}
@@ -112,20 +115,27 @@ def extract_information_from_binary(binary):
             total_length_subpackets = int(binary[7:22], 2)
             output["total_length_subpackets"] = total_length_subpackets
             position = 22
-            output["subpackets"] = split_packages(binary[position:position+total_length_subpackets], total_length_subpackets, mode="total_length_subpackets")
+            output["subpackets"] = split_packages(
+                binary[position : position + total_length_subpackets],
+                total_length_subpackets,
+                mode="total_length_subpackets",
+            )
             position += total_length_subpackets
 
         elif length_type_id == 1:
             number_of_subpackets = int(binary[7:18], 2)
             output["number_of_subpackets"] = number_of_subpackets
             position = 18
-            output["subpackets"] = split_packages(binary[position:], number_of_subpackets, mode="number_of_subpackets")
+            output["subpackets"] = split_packages(
+                binary[position:], number_of_subpackets, mode="number_of_subpackets"
+            )
 
             for s in output["subpackets"]:
                 position += s["length"]
 
     output["length"] = position
     return output
+
 
 def sum_version_numbers(dictionary):
     sum = 0

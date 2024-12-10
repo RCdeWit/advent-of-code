@@ -3,6 +3,7 @@ import collections
 import logging
 import sys
 
+
 def parse_input(input: list):
     list_1 = []
     list_2 = []
@@ -18,14 +19,17 @@ def parse_input(input: list):
 
     return list_1, list_2
 
+
 def compare_list(list_1: list, list_2: list):
     for i, value in enumerate(list_1):
         distance = abs(value - list_2[i])
         yield distance
 
+
 def group_by_count(input_list: list) -> dict:
     counter = collections.Counter(input_list)
     return counter
+
 
 def calculate_similarity_score(input_list: list, reference_list: list) -> int:
 
@@ -38,11 +42,13 @@ def calculate_similarity_score(input_list: list, reference_list: list) -> int:
 
     return similarity_score
 
+
 def solve_1(input: list) -> int:
     list_1, list_2 = parse_input(input)
     distances = compare_list(list_1, list_2)
 
     return sum(distances)
+
 
 def solve_2(input: list) -> int:
     list_1, list_2 = parse_input(input)
@@ -50,11 +56,12 @@ def solve_2(input: list) -> int:
 
     return similarity_score
 
-if __name__ == '__main__':
-     # Parse CLI arguments
+
+if __name__ == "__main__":
+    # Parse CLI arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("-q", "--question", required=True)
-    parser.add_argument("-i", "--input", required=False, default='input.txt')
+    parser.add_argument("-i", "--input", required=False, default="input.txt")
     args = parser.parse_args()
 
     input_file = args.input
@@ -71,7 +78,9 @@ if __name__ == '__main__':
     handler = logging.StreamHandler(sys.stdout)
     handler.setLevel(logging.DEBUG)
 
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
     handler.setFormatter(formatter)
     root.addHandler(handler)
 

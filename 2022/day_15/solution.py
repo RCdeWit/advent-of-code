@@ -11,8 +11,10 @@ args = parser.parse_args()
 input_file = args.input
 question = args.question
 
+
 def get_radius(location_1, location_2):
     return abs(location_1[0] - location_2[0]) + abs(location_1[1] - location_2[1])
+
 
 # Read input
 with open(input_file) as f:
@@ -23,10 +25,10 @@ with open(input_file) as f:
     sensors = {}
     beacons = {}
 
-    min_x = float('inf')
-    max_x = -float('inf')
-    min_y = float('inf')
-    max_y = -float('inf')
+    min_x = float("inf")
+    max_x = -float("inf")
+    min_y = float("inf")
+    max_y = -float("inf")
 
     for line in input:
         coordinates = re.search(regex, line).groups()
@@ -45,7 +47,7 @@ with open(input_file) as f:
         if sensor_y + (radius) > max_y:
             max_y = sensor_y + (radius)
         if beacon_y > max_y:
-            max_y = beacon_y 
+            max_y = beacon_y
 
         if sensor_x - (radius) < min_x:
             min_x = sensor_x - (radius)
@@ -64,8 +66,11 @@ with open(input_file) as f:
         beacon_x = int(coordinates[2])
         beacon_y = int(coordinates[3])
 
-        sensors[sensor_x, sensor_y] = get_radius([sensor_x, sensor_y], [beacon_x, beacon_y])
+        sensors[sensor_x, sensor_y] = get_radius(
+            [sensor_x, sensor_y], [beacon_x, beacon_y]
+        )
         beacons[beacon_x, beacon_y] = 1
+
 
 def is_in_radius(point, sensor, radius):
     point_x = point[0]
@@ -115,27 +120,35 @@ match question:
 
             print("SENSOR", x, y, radius)
 
-            for dx in range(radius+1):
-                dy = (radius+1) - dx
+            for dx in range(radius + 1):
+                dy = (radius + 1) - dx
 
                 if dx != 0 and dy != 0:
-                    boundaries[(x+dx, y+dy)] = boundaries.get((x+dx, y+dy), 0) + 1
-                    boundaries[(x-dx, y+dy)] = boundaries.get((x-dx, y+dy), 0) + 1
-                    boundaries[(x+dx, y-dy)] = boundaries.get((x+dx, y-dy), 0) + 1
-                    boundaries[(x-dx, y-dy)] = boundaries.get((x-dx, y-dy), 0) + 1
+                    boundaries[(x + dx, y + dy)] = (
+                        boundaries.get((x + dx, y + dy), 0) + 1
+                    )
+                    boundaries[(x - dx, y + dy)] = (
+                        boundaries.get((x - dx, y + dy), 0) + 1
+                    )
+                    boundaries[(x + dx, y - dy)] = (
+                        boundaries.get((x + dx, y - dy), 0) + 1
+                    )
+                    boundaries[(x - dx, y - dy)] = (
+                        boundaries.get((x - dx, y - dy), 0) + 1
+                    )
 
             # Corners, otherwise they get set double
-            boundaries[(x, y+radius+1)] = boundaries.get((x, y+radius+1), 0) + 1
-            boundaries[(x, y-radius-1)] = boundaries.get((x, y-radius-1), 0) + 1
-            boundaries[(x+radius+1, y)] = boundaries.get((x+radius+1, y), 0) + 1
-            boundaries[(x-radius+1, y)] = boundaries.get((x-radius+1, y), 0) + 1
+            boundaries[(x, y + radius + 1)] = boundaries.get((x, y + radius + 1), 0) + 1
+            boundaries[(x, y - radius - 1)] = boundaries.get((x, y - radius - 1), 0) + 1
+            boundaries[(x + radius + 1, y)] = boundaries.get((x + radius + 1, y), 0) + 1
+            boundaries[(x - radius + 1, y)] = boundaries.get((x - radius + 1, y), 0) + 1
 
         candidates = []
 
         for coordinate, value in boundaries.items():
             if value >= 4:
                 candidates.append(coordinate)
-        
+
         filtered = {}
 
         for c in candidates:

@@ -2,6 +2,7 @@ import argparse
 import logging
 import sys
 
+
 def parse_input(input: list):
     time = [int(x) for x in input[0].split(" ")[1:] if x]
     distance = [int(x) for x in input[1].split(" ")[1:] if x]
@@ -9,15 +10,18 @@ def parse_input(input: list):
     for i, t in enumerate(time):
         yield (t, distance[i])
 
+
 def parse_input_2(input: list):
     time = int(input[0].split(":")[1].replace(" ", ""))
     distance = int(input[1].split(":")[1].replace(" ", ""))
     return (time, distance)
 
+
 def calculate_distance(total_time: int, button_held: int):
     travel_time = total_time - button_held
     distance = travel_time * button_held
     return distance
+
 
 def calculate_ways_to_win(total_time: int, target: int):
     ways_to_win = 0
@@ -25,8 +29,9 @@ def calculate_ways_to_win(total_time: int, target: int):
         distance = calculate_distance(total_time, i)
         if distance > target:
             ways_to_win += 1
-    
+
     return ways_to_win
+
 
 def calculate_boundary(total_time: int, target: int, search_start: int, direction: str):
     if direction == "left":
@@ -59,17 +64,19 @@ def solve_1(input):
         result = result * ways_to_win
     return result
 
+
 def solve_2(input):
     race = parse_input_2(input)
     left_boundary = calculate_boundary(race[0], race[1], race[0] / 2, "left")
     right_boundary = calculate_boundary(race[0], race[1], race[0] / 2, "right")
     return right_boundary - left_boundary + 1
 
-if __name__ == '__main__':
-     # Parse CLI arguments
+
+if __name__ == "__main__":
+    # Parse CLI arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("-q", "--question", required=True)
-    parser.add_argument("-i", "--input", required=False, default='input.txt')
+    parser.add_argument("-i", "--input", required=False, default="input.txt")
     args = parser.parse_args()
 
     input_file = args.input
@@ -86,7 +93,9 @@ if __name__ == '__main__':
     handler = logging.StreamHandler(sys.stdout)
     handler.setLevel(logging.DEBUG)
 
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
     handler.setFormatter(formatter)
     root.addHandler(handler)
 

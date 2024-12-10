@@ -30,12 +30,12 @@ with open(input_file) as f:
 
     # Parse crates into lists
     for i, line in enumerate(reversed(input_crates)):
-        
+
         # Get number of columns
         if i == 0:
             n_columns = int(max(line))
 
-            # Create stack of crates 
+            # Create stack of crates
             crates = []
             for i in range(n_columns):
                 crates.append([])
@@ -48,7 +48,7 @@ with open(input_file) as f:
             while line_position <= len(line):
                 character = line[line_position]
 
-                if  ord(character) in range(65, 91):
+                if ord(character) in range(65, 91):
                     crates[stack].append(character)
 
                 stack = stack + 1
@@ -72,6 +72,7 @@ with open(input_file) as f:
     input_crates = crates
     input_directions = directions
 
+
 def move_crates(stacks, directions):
     n_moves = directions[0]
     origin = directions[1]
@@ -82,6 +83,7 @@ def move_crates(stacks, directions):
         stacks[destination].append(target)
 
     return stacks
+
 
 def move_crates_maintain_order(stacks, directions):
     n_moves = directions[0]
@@ -94,14 +96,15 @@ def move_crates_maintain_order(stacks, directions):
     stacks[destination].extend(target)
 
     return stacks
-        
+
+
 # Print results depending on the question (1 or 2)
 match question:
     case "1":
         stacks = input_crates
         for d in input_directions:
             stacks = move_crates(stacks, d)
-            
+
         result = ""
 
         for s in stacks:
@@ -113,7 +116,7 @@ match question:
         stacks = input_crates
         for d in input_directions:
             stacks = move_crates_maintain_order(stacks, d)
-            
+
         result = ""
 
         for s in stacks:

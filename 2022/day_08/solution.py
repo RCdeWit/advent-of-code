@@ -21,9 +21,14 @@ with open(input_file) as f:
             tree_line.append(digit)
         tree_map.append(tree_line)
 
+
 def determine_visibility_tree(tree_map, tree_x=0, tree_y=0):
     # Edges of map, always visible
-    if tree_x == 0 or tree_y == 0 or tree_x == len(tree_map[tree_y] or tree_y == len(tree_map)):
+    if (
+        tree_x == 0
+        or tree_y == 0
+        or tree_x == len(tree_map[tree_y] or tree_y == len(tree_map))
+    ):
         return True
 
     tree_height = tree_map[tree_y][tree_x]
@@ -81,6 +86,7 @@ def determine_visibility_tree(tree_map, tree_x=0, tree_y=0):
     else:
         return False
 
+
 def determine_scenic_score_tree(tree_map, tree_x=0, tree_y=0):
     tree_height = tree_map[tree_y][tree_x]
 
@@ -123,7 +129,8 @@ def determine_scenic_score_tree(tree_map, tree_x=0, tree_y=0):
             print("ERROR: this should never happen")
             exit()
 
-    return(visible_n * visible_e * visible_s * visible_w)
+    return visible_n * visible_e * visible_s * visible_w
+
 
 # Print results depending on the question (1 or 2)
 match question:

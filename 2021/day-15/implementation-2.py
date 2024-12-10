@@ -1,6 +1,6 @@
 from queue import PriorityQueue
 
-with open('input.txt') as f:
+with open("input.txt") as f:
     input = f.read().splitlines()
 
 map = []
@@ -19,7 +19,7 @@ def dijkstra(map):
     for y in range(len(map)):
         row = []
         for x in range(len(map[0])):
-            row.append(float('inf'))
+            row.append(float("inf"))
         costs.append(row)
 
     # Use a dictionary to avoid double entries
@@ -33,13 +33,13 @@ def dijkstra(map):
         neighbours = {}
 
         if x > 0:
-            neighbours['left'] = [costs[y][x-1], -1, 0]
-        if x < width-1:
-            neighbours['right'] = [costs[y][x+1], 1, 0]
+            neighbours["left"] = [costs[y][x - 1], -1, 0]
+        if x < width - 1:
+            neighbours["right"] = [costs[y][x + 1], 1, 0]
         if y > 0:
-            neighbours['up'] = [costs[y-1][x], 0, -1]
-        if y < length-1:
-            neighbours['down'] = [costs[y+1][x], 0, 1]
+            neighbours["up"] = [costs[y - 1][x], 0, -1]
+        if y < length - 1:
+            neighbours["down"] = [costs[y + 1][x], 0, 1]
 
         old_value = costs[y][x]
         new_value = neighbours[min(neighbours, key=neighbours.get)][0] + map[y][x]
@@ -63,7 +63,8 @@ def dijkstra(map):
         # Remove current coordinate from list
         del to_visit[position]
 
-    return(costs)
+    return costs
+
 
 def increase_digit_with_overflow(digit, increase):
     output = digit + increase
@@ -73,6 +74,7 @@ def increase_digit_with_overflow(digit, increase):
 
     return output
 
+
 def create_larger_map(map, duplication):
     output_horizontal = []
 
@@ -80,7 +82,7 @@ def create_larger_map(map, duplication):
         output_row = []
         for i in range(duplication):
             for x in row:
-                    output_row.append(increase_digit_with_overflow(x, i))
+                output_row.append(increase_digit_with_overflow(x, i))
 
         output_horizontal.append(output_row)
 
@@ -92,7 +94,6 @@ def create_larger_map(map, duplication):
                 output_row.append(increase_digit_with_overflow(x, i))
 
             output.append(output_row)
-
 
     return output
 

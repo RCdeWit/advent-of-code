@@ -13,6 +13,7 @@ question = args.question
 with open(input_file) as f:
     input = list(f.read().splitlines())
 
+
 def find_beating_play(opponent):
     match opponent:
         case "rock":
@@ -21,6 +22,7 @@ def find_beating_play(opponent):
             return "scissors"
         case "scissors":
             return "rock"
+
 
 def find_losing_play(opponent):
     match opponent:
@@ -31,6 +33,7 @@ def find_losing_play(opponent):
         case "scissors":
             return "paper"
 
+
 # Play round of RPS
 def play_round_rps(player1, player2):
     if player1 == player2:
@@ -39,7 +42,8 @@ def play_round_rps(player1, player2):
         return "win"
     else:
         return "loss"
-    
+
+
 # Calculate score
 def calc_score(result, choice):
     score = 0
@@ -60,6 +64,7 @@ def calc_score(result, choice):
 
     return score
 
+
 # Change input letter to RPS
 def parse_input(letter):
     match letter:
@@ -76,6 +81,7 @@ def parse_input(letter):
         case "Z":
             return "scissors"
 
+
 def parse_input_2(letter):
     match letter:
         case "X":
@@ -84,6 +90,7 @@ def parse_input_2(letter):
             return "draw"
         case "Z":
             return "win"
+
 
 # Print results depending on the question (1 or 2)
 match question:

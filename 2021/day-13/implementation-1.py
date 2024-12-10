@@ -1,6 +1,6 @@
 import numpy
 
-with open('input.txt') as f:
+with open("input.txt") as f:
     input = f.read().splitlines()
 
 dots = []
@@ -11,14 +11,14 @@ max_y = 0
 
 for line in input:
     if line[0:4] == "fold":
-        axis = line[11:].split('=')[0]
-        value = int(line[11:].split('=')[1])
+        axis = line[11:].split("=")[0]
+        value = int(line[11:].split("=")[1])
         folds.append([axis, value])
     elif line == "":
         None
     else:
-        x = int(line.split(',')[0])
-        y = int(line.split(',')[1])
+        x = int(line.split(",")[0])
+        y = int(line.split(",")[1])
 
         if x > max_x:
             max_x = x
@@ -27,7 +27,7 @@ for line in input:
 
         dots.append([x, y])
 
-paper = numpy.zeros([max_y+1, max_x+1])
+paper = numpy.zeros([max_y + 1, max_x + 1])
 for dot in dots:
     paper[dot[1]][dot[0]] += 1
 
@@ -48,12 +48,11 @@ def fold_grid(grid, axis, value):
                 for j, val in enumerate(row):
                     output[value - distance_from_fold][j] += val
 
-
     # Vertical fold along x
     elif axis == "x":
         for i, row in enumerate(grid):
             output_row = []
-            distance_from_fold = 0 # Reset for every new row
+            distance_from_fold = 0  # Reset for every new row
             for j, val in enumerate(row):
                 if j < value:
                     output_row.append(val)
@@ -67,6 +66,7 @@ def fold_grid(grid, axis, value):
 
     return output
 
+
 def count_dots(grid):
     count = 0
     for x in grid:
@@ -74,6 +74,7 @@ def count_dots(grid):
             if y >= 1:
                 count += 1
     return count
+
 
 # print(f"Original width: {len(paper)}, Original length: {len(paper[0])}")
 for fold in folds:
@@ -83,6 +84,7 @@ for fold in folds:
 
 # Solution 1:
 # print(count_dots(paper))
+
 
 def print_paper(grid):
     for x in grid:
@@ -94,6 +96,7 @@ def print_paper(grid):
                 row += " "
 
         print(row)
+
 
 # Solution 2:
 print_paper(paper)

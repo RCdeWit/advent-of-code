@@ -2,6 +2,7 @@ import argparse
 import logging
 import sys
 
+
 def parse_line(line: str):
     game_id = int(line.split(":")[0].split("Game ")[1])
     # logging.debug(f"Game ID: {game_id}")
@@ -12,15 +13,16 @@ def parse_line(line: str):
     result = []
     for s in sets:
         sub_result = {}
-        balls = s.split(',')
+        balls = s.split(",")
         for b in balls:
-            amount = int(''.join([char for char in b.split() if char.isdigit()]))
-            colour = ''.join([char for char in b.split() if char.isalpha()])
+            amount = int("".join([char for char in b.split() if char.isdigit()]))
+            colour = "".join([char for char in b.split() if char.isalpha()])
             sub_result[colour] = amount
         result.append(sub_result)
 
     # logging.debug(f"Game: {game_id}: {result}")
     return game_id, result
+
 
 def game_is_possible(game: list):
     for sets in game:
@@ -36,6 +38,7 @@ def game_is_possible(game: list):
                 return False
     return True
 
+
 def min_amounts_per_colour(game: list):
     min_red = min_green = min_blue = 0
 
@@ -50,8 +53,10 @@ def min_amounts_per_colour(game: list):
 
     return {"red": min_red, "green": min_green, "blue": min_blue}
 
+
 def get_power_of_set(balls: dict):
-    return balls['red'] * balls['green'] * balls['blue']
+    return balls["red"] * balls["green"] * balls["blue"]
+
 
 def solve_1(input: list):
     games = {}
@@ -65,7 +70,7 @@ def solve_1(input: list):
         if game_is_possible(game):
             # logging.debug(f"Game {game_id} is possible")
             result = result + game_id
-    
+
     return result
 
 
@@ -84,11 +89,11 @@ def solve_2(input: list):
     return result
 
 
-if __name__ == '__main__':
-     # Parse CLI arguments
+if __name__ == "__main__":
+    # Parse CLI arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("-q", "--question", required=True)
-    parser.add_argument("-i", "--input", required=False, default='input.txt')
+    parser.add_argument("-i", "--input", required=False, default="input.txt")
     args = parser.parse_args()
 
     input_file = args.input
@@ -105,7 +110,9 @@ if __name__ == '__main__':
     handler = logging.StreamHandler(sys.stdout)
     handler.setLevel(logging.DEBUG)
 
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
     handler.setFormatter(formatter)
     root.addHandler(handler)
 

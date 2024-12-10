@@ -14,6 +14,7 @@ question = args.question
 with open(input_file) as f:
     input = list(f.read())
 
+
 # Iterate through all characters in input, use buffer of marker_length
 # If the buffer only contains distinct characters, we've found our marker position
 def find_marker_position(datastream, marker_length):
@@ -27,10 +28,11 @@ def find_marker_position(datastream, marker_length):
             # If its length < 4, there's a duplicate in the buffer
             # Otherwise we have found the start of the packet
             if len(set(buffer)) == marker_length:
-                return(i+1)
+                return i + 1
 
             # Ditch first character in buffer
             buffer.pop(0)
+
 
 # Print results depending on the question (1 or 2)
 match question:

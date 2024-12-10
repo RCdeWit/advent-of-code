@@ -1,5 +1,6 @@
-with open('input.txt') as f:
-    list_of_crabs = list(map(int, f.read().split(',')))
+with open("input.txt") as f:
+    list_of_crabs = list(map(int, f.read().split(",")))
+
 
 def get_summed_distances_from_line(list, line):
     total_distance = 0

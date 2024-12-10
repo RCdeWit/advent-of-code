@@ -1,4 +1,4 @@
-with open('input.txt') as f:
+with open("input.txt") as f:
     input = f.read().splitlines()
 
 octopuses = []
@@ -10,6 +10,7 @@ for line in input:
 
     octopuses.append(x)
 
+
 def get_value_coordinate(map, coordinate):
     x = coordinate[0]
     y = coordinate[1]
@@ -20,6 +21,7 @@ def get_value_coordinate(map, coordinate):
         return None
     else:
         return map[y][x]
+
 
 def set_value_coordinate(map, coordinate, mutation):
     x = coordinate[0]
@@ -36,7 +38,10 @@ def set_value_coordinate(map, coordinate, mutation):
 
     return map
 
+
 total_flashes = 0
+
+
 def flash_octopus(map):
     output = map
     count_flashes = 0
@@ -46,29 +51,31 @@ def flash_octopus(map):
             if val >= 10:
 
                 # Change adjacent values
-                output = set_value_coordinate(output, [x-1, y-1], 1)
-                output = set_value_coordinate(output, [x, y-1], 1)
-                output = set_value_coordinate(output, [x+1, y-1], 1)
+                output = set_value_coordinate(output, [x - 1, y - 1], 1)
+                output = set_value_coordinate(output, [x, y - 1], 1)
+                output = set_value_coordinate(output, [x + 1, y - 1], 1)
 
-                output = set_value_coordinate(output, [x-1, y], 1)
-                output = set_value_coordinate(output, [x+1, y], 1)
+                output = set_value_coordinate(output, [x - 1, y], 1)
+                output = set_value_coordinate(output, [x + 1, y], 1)
 
-                output = set_value_coordinate(output, [x-1, y+1], 1)
-                output = set_value_coordinate(output, [x, y+1], 1)
-                output = set_value_coordinate(output, [x+1, y+1], 1)
+                output = set_value_coordinate(output, [x - 1, y + 1], 1)
+                output = set_value_coordinate(output, [x, y + 1], 1)
+                output = set_value_coordinate(output, [x + 1, y + 1], 1)
 
                 output[y][x] = -1
                 count_flashes += 1
 
-    return([output, count_flashes])
+    return [output, count_flashes]
+
 
 def check_all_flashed(map):
     for y, row in enumerate(map):
         for x, val in enumerate(row):
-                if val >= 10:
-                    return False
+            if val >= 10:
+                return False
 
     return True
+
 
 def set_flashed_to_0(map):
     for y, row in enumerate(map):
@@ -77,7 +84,6 @@ def set_flashed_to_0(map):
                 map[y][x] = 0
 
     return map
-
 
 
 n_cycles = 100

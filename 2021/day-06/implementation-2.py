@@ -1,5 +1,5 @@
-with open('input.txt') as f:
-    list_of_fish = list(map(int, f.read().split(',')))
+with open("input.txt") as f:
+    list_of_fish = list(map(int, f.read().split(",")))
 
 n_days = 256
 

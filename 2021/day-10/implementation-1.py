@@ -1,5 +1,6 @@
-with open('input.txt') as f:
+with open("input.txt") as f:
     input = f.read().splitlines()
+
 
 def get_opposite_character(char):
     open_chars = ["(", "[", "{", "<"]
@@ -10,8 +11,10 @@ def get_opposite_character(char):
     else:
         return open_chars[close_chars.index(char)]
 
+
 def is_legitimate_combination(open, close):
     return open == get_opposite_character(close)
+
 
 def parse_line(line):
     open_chars = ["(", "[", "{", "<"]
@@ -28,6 +31,7 @@ def parse_line(line):
             else:
                 return char
 
+
 def score_illegal_char(char):
     if char == ")":
         return 3
@@ -37,6 +41,7 @@ def score_illegal_char(char):
         return 1197
     elif char == ">":
         return 25137
+
 
 total_score = 0
 for line in input:

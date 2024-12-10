@@ -1,9 +1,9 @@
 import argparse
 import logging
 import sys
-
 from collections import defaultdict
 from math import floor
+
 
 def parse_input(input: list):
     rules = []
@@ -16,8 +16,9 @@ def parse_input(input: list):
             rules.append(tuple(map(int, line.split("|"))))
         else:
             updates.append(list(map(int, line.split(","))))
-        
+
     return rules, updates
+
 
 def aggregate_rules(rules: list) -> dict:
     output = defaultdict(list)
@@ -26,6 +27,7 @@ def aggregate_rules(rules: list) -> dict:
 
     return output
 
+
 def check_if_matches_rules(rules: list, update: list) -> bool:
     rules = aggregate_rules(rules)
     for i, value in enumerate(update):
@@ -33,6 +35,7 @@ def check_if_matches_rules(rules: list, update: list) -> bool:
             return False
 
     return True
+
 
 def order_pages(rules: list, update: list) -> list:
     ordered = []
@@ -58,10 +61,11 @@ def order_pages(rules: list, update: list) -> list:
 
     return ordered
 
+
 def solve_1(input: list) -> int:
     rules, updates = parse_input(input)
     matches = list(map(lambda x: check_if_matches_rules(rules, x), updates))
-    middle_pages = list(map(lambda x: x[floor(len(x)/2)], updates))
+    middle_pages = list(map(lambda x: x[floor(len(x) / 2)], updates))
 
     result = 0
     for i, match in enumerate(matches):
@@ -69,6 +73,7 @@ def solve_1(input: list) -> int:
             result += middle_pages[i]
 
     return result
+
 
 def solve_2(input: list) -> int:
     rules, updates = parse_input(input)
@@ -78,15 +83,16 @@ def solve_2(input: list) -> int:
     for i, match in enumerate(matches):
         if not match:
             ordered = order_pages(rules, updates[i])
-            middle_pages.append(ordered[floor(len(ordered)/2)])
+            middle_pages.append(ordered[floor(len(ordered) / 2)])
 
     return sum(middle_pages)
 
-if __name__ == '__main__':
-     # Parse CLI arguments
+
+if __name__ == "__main__":
+    # Parse CLI arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("-q", "--question", required=True)
-    parser.add_argument("-i", "--input", required=False, default='input.txt')
+    parser.add_argument("-i", "--input", required=False, default="input.txt")
     args = parser.parse_args()
 
     input_file = args.input
@@ -103,7 +109,9 @@ if __name__ == '__main__':
     handler = logging.StreamHandler(sys.stdout)
     handler.setLevel(logging.DEBUG)
 
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
     handler.setFormatter(formatter)
     root.addHandler(handler)
 

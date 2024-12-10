@@ -2,6 +2,7 @@ import argparse
 import logging
 import sys
 
+
 def parse_input(input: list):
     cards = {}
     for line in input:
@@ -18,9 +19,10 @@ def parse_input(input: list):
         haves.sort()
 
         cards[card_id] = [winning, haves]
-    
+
     # logging.debug(cards)
     return cards
+
 
 def compare_card(card: list):
     winning, haves = card
@@ -29,13 +31,15 @@ def compare_card(card: list):
         if w in haves:
             yield w
 
+
 def calculate_score(matches: list):
     if len(matches) == 0:
         return 0
     elif len(matches) == 1:
         return 1
     else:
-        return 2 ** (len(matches)-1)
+        return 2 ** (len(matches) - 1)
+
 
 def find_cards_won(card_id: str, all_cards: dict):
     score = len(list(compare_card(all_cards[card_id])))
@@ -45,9 +49,10 @@ def find_cards_won(card_id: str, all_cards: dict):
         yield str(int(card_id) + i)
         i += 1
 
+
 def solve_1(input):
     cards = parse_input(input)
-    
+
     result = 0
     for card_id in cards:
         compared = list(compare_card(cards[card_id]))
@@ -56,11 +61,12 @@ def solve_1(input):
 
     return result
 
+
 def solve_2(input):
     cards = parse_input(input)
     stash = {}
     for i in range(len(cards)):
-        stash[str(i+1)] = 1
+        stash[str(i + 1)] = 1
 
     for key, count in stash.items():
         cards_won = list(find_cards_won(key, cards))
@@ -70,11 +76,12 @@ def solve_2(input):
     # logging.debug(stash)
     return sum(stash.values())
 
-if __name__ == '__main__':
-     # Parse CLI arguments
+
+if __name__ == "__main__":
+    # Parse CLI arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("-q", "--question", required=True)
-    parser.add_argument("-i", "--input", required=False, default='input.txt')
+    parser.add_argument("-i", "--input", required=False, default="input.txt")
     args = parser.parse_args()
 
     input_file = args.input
@@ -91,7 +98,9 @@ if __name__ == '__main__':
     handler = logging.StreamHandler(sys.stdout)
     handler.setLevel(logging.DEBUG)
 
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
     handler.setFormatter(formatter)
     root.addHandler(handler)
 

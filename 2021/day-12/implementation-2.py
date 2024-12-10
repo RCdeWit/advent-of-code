@@ -1,11 +1,11 @@
-with open('input.txt') as f:
+with open("input.txt") as f:
     input = f.read().splitlines()
 
 arches = []
 
 for line in input:
-    pos1 = line.split('-')[0]
-    pos2 = line.split('-')[1]
+    pos1 = line.split("-")[0]
+    pos2 = line.split("-")[1]
 
     arches.append([pos1, pos2])
 
@@ -28,6 +28,7 @@ for arch in arches:
 
 revisit_small_available = True
 
+
 # Horrendous approach, but we can check if we used our double small cave already
 def double_small_cave_exists(path):
     count = 0
@@ -35,21 +36,27 @@ def double_small_cave_exists(path):
         if path.count(node) > 1 and node.islower():
             return True
 
+
 # Adapted from https://www.python.org/doc/essays/graphs/
 # With sincere gratitude
 def find_all_paths(graph, start, end, path=[]):
-        path = path + [start]
-        if start == end:
-            return [path]
-        if not start in graph:
-            return []
-        paths = []
-        for node in graph[start]:
-            if node not in path or node.isupper() or (not double_small_cave_exists(path) and node != "start"):
-                newpaths = find_all_paths(graph, node, end, path)
-                for newpath in newpaths:
-                    paths.append(newpath)
+    path = path + [start]
+    if start == end:
+        return [path]
+    if not start in graph:
+        return []
+    paths = []
+    for node in graph[start]:
+        if (
+            node not in path
+            or node.isupper()
+            or (not double_small_cave_exists(path) and node != "start")
+        ):
+            newpaths = find_all_paths(graph, node, end, path)
+            for newpath in newpaths:
+                paths.append(newpath)
 
-        return paths
+    return paths
+
 
 print(len(find_all_paths(graph, "start", "end")))

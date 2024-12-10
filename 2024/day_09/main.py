@@ -3,6 +3,7 @@ import logging
 import sys
 import time
 
+
 def parse_input(input: list) -> list:
     input = input[0]
     result = []
@@ -18,6 +19,7 @@ def parse_input(input: list) -> list:
                 result.append(None)
     return result
 
+
 def parse_input_2(input: list) -> list:
     input = input[0]
     result = []
@@ -30,6 +32,7 @@ def parse_input_2(input: list) -> list:
         else:
             result.append((None, int(value)))
     return result
+
 
 def compact_file(blocks: list) -> list:
     result = []
@@ -44,6 +47,7 @@ def compact_file(blocks: list) -> list:
             result.append(block)
     return result
 
+
 def print_blocks(blocks: list):
     result = ""
     for block in blocks:
@@ -53,6 +57,7 @@ def print_blocks(blocks: list):
             else:
                 result += str(block[0])
     print(result)
+
 
 def flatten_blocks(blocks: list) -> list:
     i = 0
@@ -68,6 +73,7 @@ def flatten_blocks(blocks: list) -> list:
             i += 1  # Only increment if no merge happened
 
     return blocks
+
 
 def compact_file_2(blocks: list) -> list:
     queue = reversed(blocks.copy())
@@ -86,7 +92,7 @@ def compact_file_2(blocks: list) -> list:
                 blocks.pop(i)
                 blocks.insert(i, (value, required_length))
                 if remaining_space > 0:
-                    blocks.insert(i+1, (None, remaining_space))
+                    blocks.insert(i + 1, (None, remaining_space))
                 for j in range(len(blocks) - 1, -1, -1):  # Iterate in reverse
                     if blocks[j] == q:
                         blocks[j] = (None, required_length)
@@ -106,6 +112,7 @@ def calculate_checksum(blocks: list) -> int:
         result += block_sum
     return result
 
+
 def calculate_checksum_2(blocks: list) -> int:
     result = 0
     i = 0
@@ -115,9 +122,10 @@ def calculate_checksum_2(blocks: list) -> int:
             continue
         else:
             for _ in range(block[1]):
-                result += (i * block[0])
+                result += i * block[0]
                 i += 1
     return result
+
 
 def solve_1(input: list) -> int:
     blocks = parse_input(input)
@@ -128,6 +136,7 @@ def solve_1(input: list) -> int:
 
     result = calculate_checksum(compacted)
     return result
+
 
 def solve_2(input: list) -> int:
     blocks = parse_input_2(input)
@@ -140,11 +149,11 @@ def solve_2(input: list) -> int:
     return result
 
 
-if __name__ == '__main__':
-     # Parse CLI arguments
+if __name__ == "__main__":
+    # Parse CLI arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("-q", "--question", required=True)
-    parser.add_argument("-i", "--input", required=False, default='input.txt')
+    parser.add_argument("-i", "--input", required=False, default="input.txt")
     args = parser.parse_args()
 
     input_file = args.input
@@ -161,7 +170,9 @@ if __name__ == '__main__':
     handler = logging.StreamHandler(sys.stdout)
     handler.setLevel(logging.DEBUG)
 
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
     handler.setFormatter(formatter)
     root.addHandler(handler)
 

@@ -3,8 +3,8 @@ import itertools
 import logging
 import sys
 import time
-
 from collections import defaultdict
+
 
 def parse_input(input: list) -> (list, defaultdict):
     antennas = defaultdict(list)
@@ -20,7 +20,10 @@ def parse_input(input: list) -> (list, defaultdict):
 
     return grid, dict(antennas)
 
-def find_antinodes(coordinates: list, grid_size: tuple, harmonics: bool = False) -> list:
+
+def find_antinodes(
+    coordinates: list, grid_size: tuple, harmonics: bool = False
+) -> list:
     combinations = list(itertools.combinations(coordinates, 2))
     max_x, max_y = grid_size
     max_x -= 1
@@ -66,6 +69,7 @@ def find_antinodes(coordinates: list, grid_size: tuple, harmonics: bool = False)
 
     return antinodes
 
+
 def solve_1(input: list) -> int:
     grid, antennas = parse_input(input)
     grid_size = (len(grid[0]), len(grid))
@@ -92,11 +96,11 @@ def solve_2(input: list) -> int:
     return len(result)
 
 
-if __name__ == '__main__':
-     # Parse CLI arguments
+if __name__ == "__main__":
+    # Parse CLI arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("-q", "--question", required=True)
-    parser.add_argument("-i", "--input", required=False, default='input.txt')
+    parser.add_argument("-i", "--input", required=False, default="input.txt")
     args = parser.parse_args()
 
     input_file = args.input
@@ -113,7 +117,9 @@ if __name__ == '__main__':
     handler = logging.StreamHandler(sys.stdout)
     handler.setLevel(logging.DEBUG)
 
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
     handler.setFormatter(formatter)
     root.addHandler(handler)
 

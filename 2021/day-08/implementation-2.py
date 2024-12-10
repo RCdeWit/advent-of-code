@@ -1,11 +1,11 @@
-with open('input.txt') as f:
+with open("input.txt") as f:
     input = f.read().splitlines()
 
 values = []
 
 for i, line in enumerate(input):
-    signal = input[i].split(' | ')[0].split(' ')
-    output = input[i].split(' | ')[1].split(' ')
+    signal = input[i].split(" | ")[0].split(" ")
+    output = input[i].split(" | ")[1].split(" ")
 
     signal_sorted = []
     for i in signal:
@@ -20,6 +20,7 @@ for i, line in enumerate(input):
     values.append([signal_sorted, output_sorted])
 
 count_numbers = [0] * 10
+
 
 # Based on a line of inputs and outputs, deduce the translation of signals to numbers
 # Bit nasty with the repetitive for loops, but it needs to be done per number. And it's not prohibitingly slow.
@@ -59,7 +60,9 @@ def find_definitions(input):
     for i, val in enumerate(input):
         for j, number in enumerate(val):
             if number not in dictionary_numbers:
-                if number.issubset(dictionary_numbers[9]) and dictionary_numbers[1].issubset(number):
+                if number.issubset(dictionary_numbers[9]) and dictionary_numbers[
+                    1
+                ].issubset(number):
                     dictionary_numbers[3] = number
 
     # Find 6
@@ -93,7 +96,8 @@ def find_definitions(input):
             if number not in dictionary_numbers:
                 dictionary_numbers[2] = number
 
-    return(dictionary_numbers)
+    return dictionary_numbers
+
 
 # Now do the actual decoding per line
 results_decoding = []

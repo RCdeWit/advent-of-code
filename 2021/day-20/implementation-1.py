@@ -1,4 +1,4 @@
-with open('input.txt') as f:
+with open("input.txt") as f:
     input = f.read().splitlines()
 
 algorithm = ""
@@ -18,6 +18,7 @@ for line in input[2:]:
             y.append(1)
     image.append(y)
 
+
 def get_padding_value(algorithm, oddeven):
     if algorithm[0] == "0":
         return 0
@@ -26,6 +27,7 @@ def get_padding_value(algorithm, oddeven):
             return algorithm[-1]
         else:
             return algorithm[0]
+
 
 def pad_image(image, padding, algorithm, oddeven):
     padding = int(padding)
@@ -51,7 +53,8 @@ def pad_image(image, padding, algorithm, oddeven):
     for i in range(padding):
         output.append([pad] * width)
 
-    return(output)
+    return output
+
 
 def get_value_coordinate_from_algorithm(image, coordinate, algorithm, pad):
     output = ""
@@ -70,7 +73,6 @@ def get_value_coordinate_from_algorithm(image, coordinate, algorithm, pad):
             else:
                 output += str(image[neighbour_y][neighbour_x])
 
-
     algorithm_postion = int(output, 2)
     value = algorithm[algorithm_postion]
 
@@ -85,10 +87,13 @@ def process_image(image, algorithm, oddeven):
     for y, row in enumerate(image):
         output_row = []
         for x, val in enumerate(row):
-            output_row.append(get_value_coordinate_from_algorithm(image, [x, y], algorithm, pad))
+            output_row.append(
+                get_value_coordinate_from_algorithm(image, [x, y], algorithm, pad)
+            )
         output.append(output_row)
 
     return output
+
 
 n_cycles = 50
 result = image

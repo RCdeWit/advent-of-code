@@ -3,6 +3,7 @@ import logging
 import re
 import sys
 
+
 def parse_input(input: list):
     pattern = r"mul\(\d{1,3},\d{1,3}\)"
 
@@ -12,6 +13,7 @@ def parse_input(input: list):
 
     # logging.debug(calculations)
     return calculations
+
 
 def split_do_dont(program: list) -> str:
     # Add explicit do at start
@@ -25,6 +27,7 @@ def split_do_dont(program: list) -> str:
 
     return "".join(program)
 
+
 def execute_calculation(calculation: str) -> int:
     instruction = calculation.split("(")[0]
     param_1 = calculation.split("(")[1].split(",")[0]
@@ -33,9 +36,11 @@ def execute_calculation(calculation: str) -> int:
     if instruction == "mul":
         return int(param_1) * int(param_2)
 
+
 def solve_1(input: list) -> int:
     calculations = parse_input(input)
     return sum(map(execute_calculation, calculations))
+
 
 def solve_2(input: list) -> int:
     dont_removed = [split_do_dont(input)]
@@ -43,11 +48,12 @@ def solve_2(input: list) -> int:
     # logging.debug(calculations)
     return sum(map(execute_calculation, calculations))
 
-if __name__ == '__main__':
-     # Parse CLI arguments
+
+if __name__ == "__main__":
+    # Parse CLI arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("-q", "--question", required=True)
-    parser.add_argument("-i", "--input", required=False, default='input.txt')
+    parser.add_argument("-i", "--input", required=False, default="input.txt")
     args = parser.parse_args()
 
     input_file = args.input
@@ -64,7 +70,9 @@ if __name__ == '__main__':
     handler = logging.StreamHandler(sys.stdout)
     handler.setLevel(logging.DEBUG)
 
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
     handler.setFormatter(formatter)
     root.addHandler(handler)
 
