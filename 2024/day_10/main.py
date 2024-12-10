@@ -69,8 +69,14 @@ def solve_1(input: list) -> int:
     return result
 
 def solve_2(input: list) -> int:
-    pass
+    grid, trail_heads = parse_input(input)
+    result = 0
+    for trail_head in trail_heads:
+        paths = find_paths(grid, trail_head)
+        # trail_score = calculate_trail_score(paths)
+        result += len(paths)
 
+    return result
 if __name__ == '__main__':
      # Parse CLI arguments
     parser = argparse.ArgumentParser()
