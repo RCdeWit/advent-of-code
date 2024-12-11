@@ -47,7 +47,17 @@ def solve_1(input: list) -> int:
 
 
 def solve_2(input: list) -> int:
-    pass
+    stones = parse_input(input)
+    # logging.debug(stones)
+
+    steps = 75
+    while steps > 0:
+        stones = process_stones(stones)
+        steps -= 1
+        # logging.debug(stones)
+
+    return sum(stones.values())
+
 
 if __name__ == "__main__":
     # Parse CLI arguments
