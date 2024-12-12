@@ -77,105 +77,109 @@ def calculate_fence_price(region: dict) -> int:
 
 def find_corners(region: dict) -> int:
     total_corners = 0
-    for plot in region["plots"]:
+    plots = region["plots"]
+    for plot in plots:
         x, y = plot
         corners = 0
-        potential_neighbours = {
+        neighbours = {
             "W": (x - 1, y),
             "E": (x + 1, y),
             "N": (x, y - 1),
             "S": (x, y + 1),
         }
-        potential_diagonals = {
+        diagonals = {
             "NW": (x - 1, y - 1),
             "NE": (x + 1, y - 1),
             "SW": (x - 1, y + 1),
             "SE": (x + 1, y + 1),
         }
 
+        # Outer corners
         if (
-            potential_neighbours["W"] not in region["plots"]
-            and potential_neighbours["N"] not in region["plots"]
-            and potential_diagonals["NW"] not in region["plots"]
+            neighbours["W"] not in plots
+            and neighbours["N"] not in plots
+            and diagonals["NW"] not in plots
         ):
             logging.debug(f"Found outer corner: NW for {plot}")
             corners += 1
         if (
-            potential_neighbours["E"] not in region["plots"]
-            and potential_neighbours["N"] not in region["plots"]
-            and potential_diagonals["NE"] not in region["plots"]
+            neighbours["E"] not in plots
+            and neighbours["N"] not in plots
+            and diagonals["NE"] not in plots
         ):
             logging.debug(f"Found outer corner: NE for {plot}")
             corners += 1
         if (
-            potential_neighbours["W"] not in region["plots"]
-            and potential_neighbours["S"] not in region["plots"]
-            and potential_diagonals["SW"] not in region["plots"]
+            neighbours["W"] not in plots
+            and neighbours["S"] not in plots
+            and diagonals["SW"] not in plots
         ):
             logging.debug(f"Found outer corner: SW for {plot}")
             corners += 1
         if (
-            potential_neighbours["E"] not in region["plots"]
-            and potential_neighbours["S"] not in region["plots"]
-            and potential_diagonals["SE"] not in region["plots"]
+            neighbours["E"] not in plots
+            and neighbours["S"] not in plots
+            and diagonals["SE"] not in plots
         ):
             logging.debug(f"Found outer corner: SE for {plot}")
             corners += 1
 
+        # Inner corners
         if (
-            potential_diagonals["NE"] not in region["plots"]
-            and potential_neighbours["N"] in region["plots"]
-            and potential_neighbours["E"] in region["plots"]
+            diagonals["NE"] not in plots
+            and neighbours["N"] in plots
+            and neighbours["E"] in plots
         ):
             logging.debug(f"Found inner corner: NE for {plot}")
             corners += 1
         if (
-            potential_diagonals["NW"] not in region["plots"]
-            and potential_neighbours["N"] in region["plots"]
-            and potential_neighbours["W"] in region["plots"]
+            diagonals["NW"] not in plots
+            and neighbours["N"] in plots
+            and neighbours["W"] in plots
         ):
             logging.debug(f"Found inner corner: NW for {plot}")
             corners += 1
         if (
-            potential_diagonals["SE"] not in region["plots"]
-            and potential_neighbours["S"] in region["plots"]
-            and potential_neighbours["E"] in region["plots"]
+            diagonals["SE"] not in plots
+            and neighbours["S"] in plots
+            and neighbours["E"] in plots
         ):
             logging.debug(f"Found inner corner: SE for {plot}")
             corners += 1
         if (
-            potential_diagonals["SW"] not in region["plots"]
-            and potential_neighbours["S"] in region["plots"]
-            and potential_neighbours["W"] in region["plots"]
+            diagonals["SW"] not in plots
+            and neighbours["S"] in plots
+            and neighbours["W"] in plots
         ):
             logging.debug(f"Found inner corner: SW for {plot}")
             corners += 1
 
+        # Edge case corners (diagonals touching)
         if (
-            potential_diagonals["NE"] in region["plots"]
-            and potential_neighbours["N"] not in region["plots"]
-            and potential_neighbours["E"] not in region["plots"]
+            diagonals["NE"] in plots
+            and neighbours["N"] not in plots
+            and neighbours["E"] not in plots
         ):
             logging.debug(f"Found inner corner: NE for {plot}")
             corners += 1
         if (
-            potential_diagonals["NW"] in region["plots"]
-            and potential_neighbours["N"] not in region["plots"]
-            and potential_neighbours["W"] not in region["plots"]
+            diagonals["NW"] in plots
+            and neighbours["N"] not in plots
+            and neighbours["W"] not in plots
         ):
             logging.debug(f"Found inner corner: NW for {plot}")
             corners += 1
         if (
-            potential_diagonals["SE"] in region["plots"]
-            and potential_neighbours["S"] not in region["plots"]
-            and potential_neighbours["E"] not in region["plots"]
+            diagonals["SE"] in plots
+            and neighbours["S"] not in plots
+            and neighbours["E"] not in plots
         ):
             logging.debug(f"Found inner corner: SE for {plot}")
             corners += 1
         if (
-            potential_diagonals["SW"] in region["plots"]
-            and potential_neighbours["S"] not in region["plots"]
-            and potential_neighbours["W"] not in region["plots"]
+            diagonals["SW"] in plots
+            and neighbours["S"] not in plots
+            and neighbours["W"] not in plots
         ):
             logging.debug(f"Found inner corner: SW for {plot}")
             corners += 1
