@@ -2,9 +2,9 @@ import argparse
 import logging
 import sys
 import time
-
 from collections import defaultdict
 from itertools import product
+
 
 def parse_input(input: list) -> (list, list):
     grid = []
@@ -18,11 +18,12 @@ def parse_input(input: list) -> (list, list):
 
     return grid, coordinates
 
+
 def find_valid_neighbours(grid: list, current: tuple) -> (set, int):
     x, y = current
     neighbours = []
     fences = 0
-    candidates = [(x-1, y), (x+1, y), (x, y-1), (x, y+1)]
+    candidates = [(x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)]
 
     for candidate in candidates:
         new_x, new_y = candidate
@@ -39,6 +40,7 @@ def find_valid_neighbours(grid: list, current: tuple) -> (set, int):
 
     # logging.debug(f"Finding neighbours for {current}: {neighbours}")
     return set(neighbours), fences
+
 
 def find_regions(grid: list) -> list:
     global_queue = set(product(range(len(grid[0])), range(len(grid))))
@@ -63,13 +65,133 @@ def find_regions(grid: list) -> list:
                 region_queue.update(neighbours)
 
         crop = grid[current[1]][current[0]]
-        regions.append({'crop': crop, 'perimeter': perimeter, 'plots': region})
+        regions.append({"crop": crop, "perimeter": perimeter, "plots": region})
         global_queue = global_queue - visited
 
     return regions
 
+
 def calculate_fence_price(region: dict) -> int:
-    return region['perimeter'] * len(region['plots'])
+    return region["perimeter"] * len(region["plots"])
+
+
+def find_corners(region: dict) -> int:
+    total_corners = 0
+    for plot in region["plots"]:
+        x, y = plot
+        corners = 0
+        potential_neighbours = {
+            "W": (x - 1, y),
+            "E": (x + 1, y),
+            "N": (x, y - 1),
+            "S": (x, y + 1),
+        }
+        potential_diagonals = {
+            "NW": (x - 1, y - 1),
+            "NE": (x + 1, y - 1),
+            "SW": (x - 1, y + 1),
+            "SE": (x + 1, y + 1),
+        }
+
+        if (
+            potential_neighbours["W"] not in region["plots"]
+            and potential_neighbours["N"] not in region["plots"]
+            and potential_diagonals["NW"] not in region["plots"]
+        ):
+            logging.debug(f"Found outer corner: NW for {plot}")
+            corners += 1
+        if (
+            potential_neighbours["E"] not in region["plots"]
+            and potential_neighbours["N"] not in region["plots"]
+            and potential_diagonals["NE"] not in region["plots"]
+        ):
+            logging.debug(f"Found outer corner: NE for {plot}")
+            corners += 1
+        if (
+            potential_neighbours["W"] not in region["plots"]
+            and potential_neighbours["S"] not in region["plots"]
+            and potential_diagonals["SW"] not in region["plots"]
+        ):
+            logging.debug(f"Found outer corner: SW for {plot}")
+            corners += 1
+        if (
+            potential_neighbours["E"] not in region["plots"]
+            and potential_neighbours["S"] not in region["plots"]
+            and potential_diagonals["SE"] not in region["plots"]
+        ):
+            logging.debug(f"Found outer corner: SE for {plot}")
+            corners += 1
+
+        if (
+            potential_diagonals["NE"] not in region["plots"]
+            and potential_neighbours["N"] in region["plots"]
+            and potential_neighbours["E"] in region["plots"]
+        ):
+            logging.debug(f"Found inner corner: NE for {plot}")
+            corners += 1
+        if (
+            potential_diagonals["NW"] not in region["plots"]
+            and potential_neighbours["N"] in region["plots"]
+            and potential_neighbours["W"] in region["plots"]
+        ):
+            logging.debug(f"Found inner corner: NW for {plot}")
+            corners += 1
+        if (
+            potential_diagonals["SE"] not in region["plots"]
+            and potential_neighbours["S"] in region["plots"]
+            and potential_neighbours["E"] in region["plots"]
+        ):
+            logging.debug(f"Found inner corner: SE for {plot}")
+            corners += 1
+        if (
+            potential_diagonals["SW"] not in region["plots"]
+            and potential_neighbours["S"] in region["plots"]
+            and potential_neighbours["W"] in region["plots"]
+        ):
+            logging.debug(f"Found inner corner: SW for {plot}")
+            corners += 1
+
+        if (
+            potential_diagonals["NE"] in region["plots"]
+            and potential_neighbours["N"] not in region["plots"]
+            and potential_neighbours["E"] not in region["plots"]
+        ):
+            logging.debug(f"Found inner corner: NE for {plot}")
+            corners += 1
+        if (
+            potential_diagonals["NW"] in region["plots"]
+            and potential_neighbours["N"] not in region["plots"]
+            and potential_neighbours["W"] not in region["plots"]
+        ):
+            logging.debug(f"Found inner corner: NW for {plot}")
+            corners += 1
+        if (
+            potential_diagonals["SE"] in region["plots"]
+            and potential_neighbours["S"] not in region["plots"]
+            and potential_neighbours["E"] not in region["plots"]
+        ):
+            logging.debug(f"Found inner corner: SE for {plot}")
+            corners += 1
+        if (
+            potential_diagonals["SW"] in region["plots"]
+            and potential_neighbours["S"] not in region["plots"]
+            and potential_neighbours["W"] not in region["plots"]
+        ):
+            logging.debug(f"Found inner corner: SW for {plot}")
+            corners += 1
+
+        total_corners += corners
+
+    return total_corners
+
+
+def calculate_fence_price_corners(region: dict) -> int:
+    number_of_corners = find_corners(region)
+    logging.debug(
+        f"{region['crop']} has {number_of_corners} corners and size {len(region['plots'])}"
+    )
+    return find_corners(region) * len(region["plots"])
+
 
 def solve_1(input: list) -> int:
     grid, coordinates = parse_input(input)
@@ -81,8 +203,13 @@ def solve_1(input: list) -> int:
     total_price = sum([calculate_fence_price(region) for region in regions])
     return total_price
 
+
 def solve_2(input: list) -> int:
-    pass
+    grid, coordinates = parse_input(input)
+    regions = find_regions(grid)
+
+    total_price = sum([calculate_fence_price_corners(region) for region in regions])
+    return total_price
 
 
 if __name__ == "__main__":
