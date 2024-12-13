@@ -4,7 +4,7 @@ import sys
 import time
 
 
-def parse_input(input: list) -> (list, list):
+def parse_input(input: list, conversion_error: bool = False) -> (list, list):
     result = {}
     machine = {}
 
@@ -22,6 +22,10 @@ def parse_input(input: list) -> (list, list):
         else:
             x = int(line.split('X=')[1].split(',')[0])
             y = int(line.split('Y=')[1])
+
+            if conversion_error:
+                x += 10000000000000
+                y += 10000000000000
             machine['Target'] = (x, y)
     result[current] = machine
 
@@ -37,10 +41,16 @@ def solve_machine(machine: dict) -> tuple:
     if det == 0:
         return None
     else:
-        for a in range(101):
-            for b in range(101):
-                if ax * a + bx * b == tx and ay * a + by * b == ty:
-                    return (a, b)
+        det_x = tx * by - ty * bx
+        det_y = ax * ty - ay * tx
+
+        a = det_x // det
+        b = det_y // det
+
+        if ax * a + bx * b == tx and ay * a + by * b == ty:
+            return (a, b)
+        else:
+            return None
 
 def calculate_cost(presses: tuple) -> int:
     a, b = presses
@@ -60,7 +70,17 @@ def solve_1(input: list) -> int:
 
 
 def solve_2(input: list) -> int:
-    pass
+    machines = parse_input(input, conversion_error=True)
+    total_cost = 0
+    logging.debug(machines)
+    for machine in machines.items():
+        machine = machine[1]
+        solution = solve_machine(machine)
+        # logging.debug(solution)
+        if solution is not None:
+            total_cost += calculate_cost(solution)
+
+    return total_cost
 
 if __name__ == "__main__":
     # Parse CLI arguments
