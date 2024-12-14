@@ -54,6 +54,38 @@ def count_robots_per_quadrant(robots: list, grid_size: tuple) -> tuple:
 
     return (q1, q2, q3, q4)
 
+def print_robots(robots: list, grid_size: tuple) -> None:
+    row = []
+    grid = []
+    for _ in range(grid_size[0]):
+        row.append(".")
+    for _ in range(grid_size[1]):
+        grid.append(row.copy())
+
+    for robot in robots:
+        x, y = robot
+        grid[y][x] = "#"
+
+    for row in grid:
+        print("".join(row))
+
+def calculate_avg_distance_to_middle(robots: list, grid_size: tuple) -> float:
+    max_x, max_y = grid_size
+    middle_x = max_x / 2
+    middle_y = max_y / 2
+
+    total_distance_x = 0
+    total_distance_y = 0
+
+    for robot in robots:
+        x, y = robot
+        total_distance_x += abs(x - middle_x)
+        total_distance_y += abs(y - middle_y)
+
+    avg_distance_x = total_distance_x / len(robots)
+    avg_distance_y = total_distance_y / len(robots)
+
+    return (avg_distance_x + avg_distance_y)
 
 def solve_1(input: list) -> int:
     robots = parse_input(input)
@@ -71,7 +103,27 @@ def solve_1(input: list) -> int:
     return result
 
 def solve_2(input: list) -> int:
-    pass
+    robots = parse_input(input)
+    # logging.debug(robots)
+    # grid_size = (101, 103)
+    grid_size = (101, 103)
+    # robots = list(map(lambda robot: calculate_movement(robot, grid_size), robots))
+
+    lowest_avg_distance_to_middle = 1_000_000_000
+    steps_for_lowest_avg_distance_to_middle = 0
+
+    for i in range(10000):
+        robots_temp = list(map(lambda robot: calculate_movement(robot, grid_size, i), robots))
+        avg_distance_to_middle = calculate_avg_distance_to_middle(robots_temp, grid_size)
+
+        if avg_distance_to_middle < lowest_avg_distance_to_middle:
+            lowest_avg_distance_to_middle = avg_distance_to_middle
+            steps_for_lowest_avg_distance_to_middle = i
+
+    robots_temp = list(map(lambda robot: calculate_movement(robot, grid_size, steps_for_lowest_avg_distance_to_middle), robots))
+
+    print_robots(robots_temp, grid_size)
+    return steps_for_lowest_avg_distance_to_middle
 
 if __name__ == "__main__":
     # Parse CLI arguments
