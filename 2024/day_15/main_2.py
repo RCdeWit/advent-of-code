@@ -1,5 +1,6 @@
 import argparse
 import logging
+import os
 import sys
 import time
 
@@ -107,7 +108,7 @@ def print_grid(robot: tuple, walls: list, crates: list) -> None:
     max_x = max(x for x, y in walls) + 1
     max_y = max(y for x, y in walls) + 1
 
-    grid = [["." for _ in range(max_x)] for _ in range(max_y)]
+    grid = [[" " for _ in range(max_x)] for _ in range(max_y)]
     for x, y in walls:
         grid[y][x] = "#"
     for (x1, y1), (x2, y2) in crates:
@@ -135,7 +136,9 @@ def solve_2(input: list) -> int:
         robot, crates = move_robot(robot, direction, crates, walls)
         # logging.debug(f"AFTER {i} ({direction}): {crates}")
     
-    print_grid(robot, walls, crates)
+        os.system('cls' if os.name == 'nt' else 'clear')
+        print_grid(robot, walls, crates)
+        time.sleep(.05)
 
     return sum(list(map(calculate_gps_score, crates)))
 
