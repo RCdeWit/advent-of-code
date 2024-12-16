@@ -1,9 +1,8 @@
 import argparse
+import heapq
 import logging
 import sys
 import time
-
-import heapq
 
 
 def parse_input(input: list) -> (list, list):
@@ -18,64 +17,73 @@ def parse_input(input: list) -> (list, list):
 
     return output, start, end
 
-def get_direction(prev, current):
+
+def get_direction(prev, current) -> tuple:
     return current[0] - prev[0], current[1] - prev[1]
 
-def dijkstra_with_turns_and_directions(grid, start, end):
-    directions = [(1, 0), (0, 1), (-1, 0), (0, -1)]  # Right, Down, Left, Up
+
+def dijkstra_with_turns_and_directions(grid: list, start: tuple, end: tuple) -> (int, list):
+    directions = [(1, 0), (0, 1), (-1, 0), (0, -1)]
 
     def find_valid_neighbours(pos: tuple) -> tuple:
         x, y = pos
         for dx, dy in directions:
             nx, ny = x + dx, y + dy
-            if 0 <= nx < len(grid[0]) and 0 <= ny < len(grid) and grid[ny][nx] != '#':
+            if 0 <= nx < len(grid[0]) and 0 <= ny < len(grid) and grid[ny][nx] != "#":
                 yield (nx, ny)
 
-    # Priority queue: (cost, current_position, previous_direction)
-    initial_direction = (1, 0)  # Fixed starting direction
-    priority_queue = [(0, start, initial_direction)]
-    visited = {}  # Track the minimum cost per (x, y, direction)
-    previous_nodes = {}  # For path reconstruction
-    best_path = []
-    min_cost = float('inf')
+    initial_direction = (1, 0)
+    priority_queue = [(0, start, initial_direction, [start])]
+
+    state_costs = {}
+    equivalent_paths = []
+    min_cost = float("inf")
 
     while priority_queue:
-        cost, current, direction = heapq.heappop(priority_queue)
+        cost, current, direction, path = heapq.heappop(priority_queue)
 
-        # Skip if we have already visited this (x, y, direction) with a lower cost
-        if (current, direction) in visited and visited[(current, direction)] <= cost:
+        # Update state costs
+        if (current, direction) in state_costs and state_costs[
+            (current, direction)
+        ] < cost:
             continue
-        visited[(current, direction)] = cost
+        state_costs[(current, direction)] = cost
 
-        # If we reach the end, check and update the minimum cost
+        # Reached end
         if current == end:
             if cost < min_cost:
                 min_cost = cost
-                # Reconstruct the path
-                best_path = []
-                node, dir = current, direction
-                while node:
-                    best_path.insert(0, node)
-                    node_info = previous_nodes.get((node, dir))
-                    if node_info is None:
-                        break
-                    node, dir = node_info
+                equivalent_paths = [path]
+            elif cost == min_cost:
+                equivalent_paths.append(path)
             continue
 
         # Explore neighbors
         for neighbor in find_valid_neighbours(current):
             new_dir = get_direction(current, neighbor)
-            
-            # Turn cost calculation: 1000 for turns, 1 for continuing
+
             turn_cost = 1001 if direction != new_dir else 1
             total_cost = cost + turn_cost
+            new_path = path + [neighbor]
 
-            # Only push neighbors if we haven't visited them with a lower cost
-            if (neighbor, new_dir) not in visited or visited[(neighbor, new_dir)] > total_cost:
-                heapq.heappush(priority_queue, (total_cost, neighbor, new_dir))
-                previous_nodes[(neighbor, new_dir)] = (current, direction)
+            # Update priority queue
+            if (neighbor, new_dir) not in state_costs or state_costs[
+                (neighbor, new_dir)
+            ] >= total_cost:
+                heapq.heappush(
+                    priority_queue, (total_cost, neighbor, new_dir, new_path)
+                )
+                state_costs[(neighbor, new_dir)] = total_cost
 
-    return min_cost, best_path
+    return min_cost, equivalent_paths
+
+
+def count_visited_nodes_in_paths(paths: list) -> int:
+    visited = set()
+    for path in paths:
+        visited.update(path)
+        logging.debug(visited)
+    return len(visited)
 
 
 def print_grid(grid: list, best_path: list):
@@ -95,13 +103,25 @@ def solve_1(input: list) -> int:
     # logging.debug(valid_steps)
 
     min_cost, best_path = dijkstra_with_turns_and_directions(grid, start, end)
-    print_grid(grid, best_path)
+    print_grid(grid, best_path[0])
 
     return min_cost
 
 
 def solve_2(input: list) -> int:
-    pass
+    grid, start, end = parse_input(input)
+    # logging.debug(grid)
+    # valid_steps = find_valid_steps(grid)
+    # logging.debug(valid_steps)
+
+    min_cost, best_paths = dijkstra_with_turns_and_directions(grid, start, end)
+    # print_grid(grid, best_paths[0])
+
+    # for path in best_paths:
+    #     print_grid(grid, path)
+    #     print()
+
+    return count_visited_nodes_in_paths(best_paths)
 
 
 if __name__ == "__main__":
