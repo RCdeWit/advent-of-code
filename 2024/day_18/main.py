@@ -58,7 +58,7 @@ def dijkstra(obstacles: list, start: tuple = (0, 0), end: tuple = (70, 70)) -> l
         path.append(step)
         step = prev.get(step)
 
-    return path[::-1] if grid[end[0]][end[1]] != float('inf') else []
+    return path[::-1] if grid[end[0]][end[1]] != float('inf') else None
 
 def solve_1(input: list) -> str:
     dropped_bytes = parse_input(input)
@@ -68,7 +68,21 @@ def solve_1(input: list) -> str:
     return len(path) - 1 # Don't count start node
 
 def solve_2(input: list) -> int:
-    pass
+    dropped_bytes = parse_input(input)
+    cutoff = 1024
+    temp_bytes = dropped_bytes[:cutoff]
+
+    current_byte = cutoff
+    while True:
+        # logging.debug(f"Trying byte {current_byte}: {dropped_bytes[current_byte]}")
+        temp_bytes.append(dropped_bytes[current_byte])
+        # logging.debug(f"Bytes: {temp_bytes}")
+        path = dijkstra(temp_bytes, start=(0,0), end=(70,70))
+        # logging.debug(f"Path length: {len(path)}")
+        if path is None:
+            logging.debug(f"No valid path after byte {current_byte}: {temp_bytes[-1]}")
+            return temp_bytes[-1]
+        current_byte += 1
 
 
 if __name__ == "__main__":
