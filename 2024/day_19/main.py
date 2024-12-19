@@ -2,7 +2,6 @@ import argparse
 import logging
 import sys
 import time
-
 from collections import defaultdict
 
 
@@ -16,18 +15,20 @@ def parse_input(input: list) -> (list, list):
 
     return towels, patterns
 
+
 def count_paths_to_pattern(pattern: str, towels: list) -> int:
     subpatterns = defaultdict(int)
     subpatterns[""] = 1
-    
+
     for i in range(len(pattern)):
         prefix = pattern[:i]
         for towel in towels:
             new_prefix = prefix + towel
             if pattern.startswith(new_prefix):
                 subpatterns[new_prefix] += subpatterns[prefix]
-    
+
     return subpatterns[pattern]
+
 
 def solve_1(input: list) -> str:
     towels, patterns = parse_input(input)
@@ -36,22 +37,20 @@ def solve_1(input: list) -> str:
 
     count = 0
     for pattern in patterns:
-        sequence = parse_pattern(pattern, towels)
-        logging.debug(f"Pattern {pattern} possible with: {sequence}")
+        sequence = count_paths_to_pattern(pattern, towels)
+        # logging.debug(f"Pattern {pattern} possible with")
 
-        if sequence is not None:
+        if sequence >= 1:
             count += 1
 
     return count
 
-    
 
 def solve_2(input: list) -> int:
     towels, patterns = parse_input(input)
     result = 0
-    for i, pattern in enumerate(patterns):
+    for pattern in patterns:
         paths = count_paths_to_pattern(pattern, towels)
-        # logging.debug(f"Found {paths} paths to pattern {i} ({pattern}) \n")
         result += paths
 
     return result
