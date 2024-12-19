@@ -3,7 +3,7 @@ import logging
 import sys
 import time
 
-from collections import deque
+from collections import defaultdict
 
 
 def parse_input(input: list) -> (list, list):
@@ -16,36 +16,18 @@ def parse_input(input: list) -> (list, list):
 
     return towels, patterns
 
-def parse_pattern(pattern: str, towels: list) -> list:
-    pattern_length = len(pattern)
-    matches = [False] * (pattern_length + 1)
-    matches[0] = True  # Empty pattern always works
+def count_paths_to_pattern(pattern: str, towels: list) -> int:
+    subpatterns = defaultdict(int)
+    subpatterns[""] = 1
     
-    # Store which towel was used to reach each position
-    prev_towel = [None] * (pattern_length + 1)
+    for i in range(len(pattern)):
+        prefix = pattern[:i]
+        for towel in towels:
+            new_prefix = prefix + towel
+            if pattern.startswith(new_prefix):
+                subpatterns[new_prefix] += subpatterns[prefix]
     
-    # For each position in the pattern
-    for i in range(pattern_length):
-        if matches[i]:
-            for towel in towels:
-                end = i + len(towel)
-                if end <= pattern_length and pattern[i:end] == towel:
-                    matches[end] = True
-                    prev_towel[end] = (i, towel)
-    
-    if not matches[pattern_length]:
-        return None
-    
-    # Reconstruct solution
-    result = []
-    pos = pattern_length
-    while pos > 0:
-        prev_pos, towel = prev_towel[pos]
-        result.append(towel)
-        pos = prev_pos
-    
-    return result[::-1]
-
+    return subpatterns[pattern]
 
 def solve_1(input: list) -> str:
     towels, patterns = parse_input(input)
@@ -65,7 +47,15 @@ def solve_1(input: list) -> str:
     
 
 def solve_2(input: list) -> int:
-    pass
+    towels, patterns = parse_input(input)
+    result = 0
+    for i, pattern in enumerate(patterns):
+        paths = count_paths_to_pattern(pattern, towels)
+        # logging.debug(f"Found {paths} paths to pattern {i} ({pattern}) \n")
+        result += paths
+
+    return result
+
 
 if __name__ == "__main__":
     # Parse CLI arguments
