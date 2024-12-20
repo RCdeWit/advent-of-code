@@ -3,9 +3,7 @@ import heapq
 import logging
 import sys
 import time
-
 from collections import defaultdict
-
 from copy import deepcopy
 
 
@@ -16,7 +14,7 @@ def parse_input(input: list) -> (list, tuple, tuple):
         for x, char in enumerate(line):
             match char:
                 case ".":
-                    row.append(float('inf'))
+                    row.append(float("inf"))
                 case "#":
                     row.append(-1)
                 case "S":
@@ -24,17 +22,18 @@ def parse_input(input: list) -> (list, tuple, tuple):
                     row.append(0)
                 case "E":
                     end = (x, y)
-                    row.append(float('inf'))
+                    row.append(float("inf"))
 
         grid.append(row)
-    
+
     return grid, start, end
+
 
 def find_viable_shortcuts(grid: list) -> list:
     results = []
     for y, row in enumerate(grid):
         for x, cell in enumerate(row):
-            if y == 0 or y == len(grid)-1 or x == 0 or x == len(row)-1:
+            if y == 0 or y == len(grid) - 1 or x == 0 or x == len(row) - 1:
                 continue
             elif cell == -1:
                 directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
@@ -48,6 +47,7 @@ def find_viable_shortcuts(grid: list) -> list:
 
     return results
 
+
 def find_viable_shortcuts_2(base_path: list) -> list:
     # Create grid-based buckets
     grid_size = 20
@@ -58,7 +58,6 @@ def find_viable_shortcuts_2(base_path: list) -> list:
         grid_key = (x // grid_size, y // grid_size)
         buckets[grid_key].append((x, y))
 
-    # Function to calculate Manhattan distance
     def manhattan(x1, y1, x2, y2):
         return abs(x1 - x2) + abs(y1 - y2)
 
@@ -70,12 +69,13 @@ def find_viable_shortcuts_2(base_path: list) -> list:
             for dy in range(-1, 2):
                 neighbor_key = (gx + dx, gy + dy)
                 if neighbor_key in buckets:
-                    for (x1, y1) in points:
-                        for (x2, y2) in buckets[neighbor_key]:
+                    for x1, y1 in points:
+                        for x2, y2 in buckets[neighbor_key]:
                             dist = manhattan(x1, y1, x2, y2)
                             if dist <= 20:
                                 results.append(((x1, y1), (x2, y2), dist))
     return results
+
 
 def dijkstra(grid: list, start: tuple = (0, 0), end: tuple = (70, 70)) -> tuple:
     cols, rows = len(grid[0]), len(grid)
@@ -113,17 +113,21 @@ def dijkstra(grid: list, start: tuple = (0, 0), end: tuple = (70, 70)) -> tuple:
             node = prev.get(node)
 
     # If no path exists, return an empty path and infinity
-    if not path_with_costs or (start not in path_with_costs or end not in path_with_costs):
-        return float('inf'), {}
+    if not path_with_costs or (
+        start not in path_with_costs or end not in path_with_costs
+    ):
+        return float("inf"), {}
 
-    return shortest_cost.get(end, float('inf')), path_with_costs
+    return shortest_cost.get(end, float("inf")), path_with_costs
+
 
 def detract_shortcut(base_path: list, shortcut: tuple) -> int:
     (x1, y1), (x2, y2), shortcut_cost = shortcut
-    base_cost =  base_path[(x2, y2)] - base_path[(x1, y1)]
+    base_cost = base_path[(x2, y2)] - base_path[(x1, y1)]
     savings = base_cost - shortcut_cost
 
     return savings
+
 
 def solve_1(input: list) -> str:
     grid, start, end = parse_input(input)
@@ -132,12 +136,11 @@ def solve_1(input: list) -> str:
 
     shortcuts = defaultdict(int)
 
-    # for shortcut in valid_shortcuts:
     for i, shortcut in enumerate(valid_shortcuts):
         logging.debug(f"Shortcut {i+1}/{len(valid_shortcuts)}")
         temp_grid = deepcopy(grid)
         x, y = shortcut
-        temp_grid[y][x] = float('inf')
+        temp_grid[y][x] = float("inf")
         length, path = dijkstra(temp_grid, start, end)
         savings = base_length - length
 
@@ -148,10 +151,12 @@ def solve_1(input: list) -> str:
 
     result = 0
     for key, value in shortcuts.items():
+        logging.debug(f"Shortcuts saving {key} picoseconds: {value}")
         if key >= 100:
             result += value
 
     return result
+
 
 def solve_2(input: list) -> int:
     grid, start, end = parse_input(input)
@@ -170,9 +175,9 @@ def solve_2(input: list) -> int:
 
         savings[saving] += 1
 
-    for k, v in sorted(savings.items()):
-        if k >= 50:
-            logging.debug(f"There are {v} cheats that save {k} picoseconds")
+    # for k, v in sorted(savings.items()):
+    #     if k >= 50:
+    #         logging.debug(f"There are {v} cheats that save {k} picoseconds")
 
     result = 0
     for key, value in savings.items():
