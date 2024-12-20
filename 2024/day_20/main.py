@@ -46,19 +46,49 @@ def find_viable_shortcuts(grid: list) -> list:
                 if adjacent_walls < 3:
                     results.append((x, y))
 
-    return results    
+    return results
 
-def dijkstra(grid: list, start: tuple = (0, 0), end: tuple = (70, 70)) -> list:
-    cols, rows = end
+def find_viable_shortcuts_2(base_path: list) -> list:
+    # Create grid-based buckets
+    grid_size = 20
+    buckets = defaultdict(list)
+
+    # Assign coordinates to grid buckets
+    for x, y in base_path.keys():
+        grid_key = (x // grid_size, y // grid_size)
+        buckets[grid_key].append((x, y))
+
+    # Function to calculate Manhattan distance
+    def manhattan(x1, y1, x2, y2):
+        return abs(x1 - x2) + abs(y1 - y2)
+
+    # Find all valid pairs
+    results = []
+    for (gx, gy), points in buckets.items():
+        # Check points in the same and neighboring buckets
+        for dx in range(-1, 2):
+            for dy in range(-1, 2):
+                neighbor_key = (gx + dx, gy + dy)
+                if neighbor_key in buckets:
+                    for (x1, y1) in points:
+                        for (x2, y2) in buckets[neighbor_key]:
+                            dist = manhattan(x1, y1, x2, y2)
+                            if dist <= 20:
+                                results.append(((x1, y1), (x2, y2), dist))
+    return results
+
+def dijkstra(grid: list, start: tuple = (0, 0), end: tuple = (70, 70)) -> tuple:
+    cols, rows = len(grid[0]), len(grid)
     directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]  # left, right, up, down
 
     # Priority queue for Dijkstra
     priority_queue = []
     heapq.heappush(priority_queue, (0, start))  # (cost, position)
-    grid[start[1]][start[0]] = 0
+    grid[start[1]][start[0]] = 0  # Accessing grid[y][x]
 
     # Track the shortest path
     prev = {start: None}
+    shortest_cost = {start: 0}
 
     while priority_queue:
         cost, current = heapq.heappop(priority_queue)
@@ -67,18 +97,37 @@ def dijkstra(grid: list, start: tuple = (0, 0), end: tuple = (70, 70)) -> list:
 
         for d in directions:
             nx, ny = current[0] + d[0], current[1] + d[1]
-            if 0 <= ny < len(grid) and 0 <= nx < len(grid[0]) and grid[ny][nx] != -1:
-                new_cost = cost + 1
-                if new_cost < grid[ny][nx]:
-                    grid[ny][nx] = new_cost
+            if 0 <= ny < rows and 0 <= nx < cols and grid[ny][nx] != -1:
+                new_cost = cost + 1  # All edges have a weight of 1
+                if (nx, ny) not in shortest_cost or new_cost < shortest_cost[(nx, ny)]:
+                    shortest_cost[(nx, ny)] = new_cost
                     heapq.heappush(priority_queue, (new_cost, (nx, ny)))
                     prev[(nx, ny)] = current
 
-    return grid[end[1]][end[0]]
+    # Reconstruct the optimal path
+    path_with_costs = {}
+    node = end
+    if node in shortest_cost:  # Ensure the end node is reachable
+        while node is not None:
+            path_with_costs[node] = shortest_cost[node]
+            node = prev.get(node)
+
+    # If no path exists, return an empty path and infinity
+    if not path_with_costs or (start not in path_with_costs or end not in path_with_costs):
+        return float('inf'), {}
+
+    return shortest_cost.get(end, float('inf')), path_with_costs
+
+def detract_shortcut(base_path: list, shortcut: tuple) -> int:
+    (x1, y1), (x2, y2), shortcut_cost = shortcut
+    base_cost =  base_path[(x2, y2)] - base_path[(x1, y1)]
+    savings = base_cost - shortcut_cost
+
+    return savings
 
 def solve_1(input: list) -> str:
     grid, start, end = parse_input(input)
-    base_length = dijkstra(deepcopy(grid), start, end)
+    base_length, base_path = dijkstra(deepcopy(grid), start, end)
     valid_shortcuts = find_viable_shortcuts(grid)
 
     shortcuts = defaultdict(int)
@@ -89,12 +138,12 @@ def solve_1(input: list) -> str:
         temp_grid = deepcopy(grid)
         x, y = shortcut
         temp_grid[y][x] = float('inf')
-        length = dijkstra(temp_grid, start, end)
+        length, path = dijkstra(temp_grid, start, end)
         savings = base_length - length
 
         shortcuts[savings] += 1
 
-    # for k, v in sorted(results.items()):
+    # for k, v in sorted(shortcuts.items()):
     #     logging.debug(f"There are {v} cheats that save {k} picoseconds")
 
     result = 0
@@ -105,7 +154,32 @@ def solve_1(input: list) -> str:
     return result
 
 def solve_2(input: list) -> int:
-    pass
+    grid, start, end = parse_input(input)
+    base_length, base_path = dijkstra(grid, start, end)
+    logging.debug(f"Base path length: {base_length}")
+    logging.debug(f"Base path: {base_path}")
+
+    valid_shortcuts = list(find_viable_shortcuts_2(base_path))
+    # logging.debug(valid_shortcuts)
+
+    savings = defaultdict(int)
+
+    for i, shortcut in enumerate(valid_shortcuts):
+        logging.debug(f"Shortcut {i+1}/{len(valid_shortcuts)}: {shortcut}")
+        saving = detract_shortcut(base_path, shortcut)
+
+        savings[saving] += 1
+
+    for k, v in sorted(savings.items()):
+        if k >= 50:
+            logging.debug(f"There are {v} cheats that save {k} picoseconds")
+
+    result = 0
+    for key, value in savings.items():
+        if key >= 100:
+            result += value
+
+    return result
 
 
 if __name__ == "__main__":
