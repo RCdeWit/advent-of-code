@@ -3,26 +3,26 @@ import logging
 import sys
 import time
 
-from collections import deque
-
-from functools import lru_cache
+from collections import deque, defaultdict
 
 def parse_input(input: list) -> list:
-    sequences = []
+    sequences = {}
     for line in input:
-        sequence = []
+        sequence = defaultdict(int)
+        start = 'A'
         for char in line:
-            sequence.append(char)
+            sequence[(start, char)] += 1
+            start = char
 
-        sequences.append(sequence)
+        sequences[line] = sequence
 
     return sequences
 
 def optimize_path_segment(path: str, schema: list, current_position: str) -> str:
-    if ("A", "W") in schema:
-        schema = "dirpad"
-    elif ("A", "0") in schema:
+    if len(schema) == 4:
         schema = "numpad"
+    elif len(schema) == 2:
+        schema = "dirpad"
     else:
         raise ValueError("Unknown control schema")
 
@@ -34,16 +34,22 @@ def optimize_path_segment(path: str, schema: list, current_position: str) -> str
             case "N":
                 priority = {"S": 0, "W": 0, "E": 0, "A": 0}
             case "S":
-                priority = {"N": 0, "W": 0, "E": 0, "A": 0}
+                priority = {"W": 0, "N": 0, "E": 0, "A": 0}
             case "E":
-                priority = {"N": 0, "W": 0, "A": 0}
+                priority = {"W": 0, "N": 0, "A": 0}
             case "A":
-                priority = {"S": 0, "W": 0, "A": 0}
+                priority = {"W": 0, "S": 0, "A": 0}
 
         for char in path:
             priority[char] += 1
 
         optimized = ""
+        if current_position == "A":
+            if priority["W"] == 2:
+                optimized += "S"
+                priority["S"] -=1
+
+        # optimized = ""
         for key, value in priority.items():
             for _ in range(value):
                 optimized += key
@@ -112,31 +118,32 @@ def get_graph(schema: list) -> list:
         
         for end, (dist, path) in distances_and_paths.items():
             if end != start:
+                path = optimize_path_segment(path, schema, start_value)
                 end_value = schema[end[0]][end[1]]
                 all_distances_and_paths[(start_value, end_value)] = (dist + 1, path) # +1 for the press on the button
     
     return all_distances_and_paths
 
-def calculate_remote_sequence(sequence: str, control_schema: list) -> (int, str):
-    total_cost = 0
+def calculate_remote_sequence(sequence: dict, control_schema: list) -> dict:
+    buttons_needed = defaultdict(int)
+
     start = 'A'
-
-    remote_button_path = ""
-
-    for button in sequence:
-        if start == button:
-            button_cost = 1
-            button_path = 'A'
+    for button_pair, count in sequence.items():
+        start, end = button_pair
+        if start == end:
+            buttons_needed[button_pair] += count
         else:
-            button_cost, button_path = control_schema[(start, button)]
-            button_path = optimize_path_segment(button_path, control_schema, start)
-        # logging.debug(f"From button {start} to {button}: {button_path} costs {button_cost} movements")
-        
-        total_cost += button_cost
-        remote_button_path += button_path
-        start = button
+            button_cost, path = control_schema[button_pair]
+            logging.debug(f"{button_pair} -> {path}")
 
-    return total_cost, remote_button_path
+            parent_start = 'A'
+            for button in path:
+                buttons_needed[(parent_start, button)] += count
+                parent_start = button
+
+        start = end
+
+    return buttons_needed
 
 
 def solve_1(input: list) -> str:
@@ -168,31 +175,29 @@ def solve_1(input: list) -> str:
 
     return result
 
-def solve_1(input: list) -> str:
+def solve_2(input: list) -> str:
     sequences = parse_input(input)
     numpad = get_graph([['7', '8', '9'], ['4', '5', '6'], ['1', '2', '3'], [None, '0', "A"]])
-    directional_pad = get_graph([[None, 'N', 'A'], ['W', 'S', 'E']])
-
-    # logging.debug(sequences)
-    # logging.debug(numpad)
-    # logging.debug(directional_pad)
+    dirpad = get_graph([[None, 'N', 'A'], ['W', 'S', 'E']])
 
     result = 0
 
-    for j, sequence in enumerate(sequences):
-        # Original numpad
-        cost, new_sequence = calculate_remote_sequence(sequence, numpad)
-        # logging.debug(f"Press {new_sequence} to achieve {sequence} at cost {cost}")
+    for raw_sequence_name, sequence in sequences.items():
+        logging.debug(f"SEQUENCE: {raw_sequence_name}")
+        nested_sequence = calculate_remote_sequence(sequence, numpad)
+        # logging.debug(f"{nested_sequence} for total {sum(nested_sequence.values())}")
 
-        # Directionalpad 1
-        for i in range(25):
-            cost, new_sequence = calculate_remote_sequence(new_sequence, directional_pad)
-            logging.debug(f"Sequence {j}, depth {i}")
-        # logging.debug(f"Press {new_sequence} to achieve {sequence} at cost {cost}")
+        for depth in range(25):
+            nested_sequence = calculate_remote_sequence(nested_sequence, dirpad)
+            logging.debug(f"Depth {depth+1} for total {sum(nested_sequence.values())}")
 
-        logging.debug(f"Result for {sequence}: {cost} * {int(''.join(sequence)[:-1])} = {cost * int(''.join(sequence)[:-1])}")
-        result += cost * int("".join(sequence)[:-1])
+        result += sum(nested_sequence.values()) * int("".join(raw_sequence_name)[:-1])
 
+    # Example target: 154115708116294
+    # Example:        154115708116294
+
+    # Target:   218309335714068
+    # Current:  218944398636948
     return result
 
 if __name__ == "__main__":
