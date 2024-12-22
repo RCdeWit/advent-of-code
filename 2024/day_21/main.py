@@ -57,24 +57,28 @@ def optimize_path_segment(path: str, schema: list, current_position: str) -> str
         return optimized
     
     elif schema == "numpad":
-        # logging.debug(f"Trying to optimize {path} from {current_position}")
-        if current_position in ("0", "A"):
-            priority = {"N": 0, "W": 0, "E": 0, "A": 0}
-        elif current_position in ("9", "6", "3"):
-            priority = {"W": 0, "S": 0, "N": 0, "A": 0}
-        elif current_position in ("8", "5", "2"):
-            priority = {"W": 0, "S": 0, "N": 0, "E": 0, "A": 0}
-        elif current_position in ("7", "4", "1"):
-            priority = {"E": 0, "S": 0, "N": 0, "A": 0}
+        priority = {"W": 0, "S": 0, "N": 0, "E": 0, "A": 0}
             
         for char in path:
             priority[char] += 1
 
         optimized = ""
-        if current_position == "A":
-            if priority["W"] == 1:
-                optimized += "W"
-                priority["W"] = 0
+
+        if current_position == "0" and priority['W'] == 1:
+            optimized += "N" * priority["N"]
+            priority["N"] = 0
+        elif current_position == "A" and priority['W'] == 2:
+            optimized += "N" * priority["N"]
+            priority["N"] = 0
+        elif current_position == "1" and priority['S'] == 1:
+            optimized += "E" * priority["E"]
+            priority["E"] = 0
+        elif current_position == "4" and priority['S'] == 2:
+            optimized += "E" * priority["E"]
+            priority["E"] = 0
+        elif current_position == "7" and priority['S'] == 3:
+            optimized += "E" * priority["E"]
+            priority["E"] = 0
 
         for key, value in priority.items():
             for _ in range(value):
@@ -193,11 +197,6 @@ def solve_2(input: list) -> str:
 
         result += sum(nested_sequence.values()) * int("".join(raw_sequence_name)[:-1])
 
-    # Example target: 154115708116294
-    # Example:        154115708116294
-
-    # Target:   218309335714068
-    # Current:  218944398636948
     return result
 
 if __name__ == "__main__":
