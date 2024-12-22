@@ -45,7 +45,39 @@ def solve_1(input: list) -> str:
     return result
 
 def solve_2(input: list) -> str:
-    pass
+    secrets = parse_input(input)
+
+    result = 0
+    all_prices = defaultdict(int)
+    for secret in secrets:
+        changes = []
+        prices = defaultdict(int)
+        for _ in range(2000):
+            old_price = secret % 10
+            secret = calculate_next_secret(secret)
+            new_price = secret % 10
+            price_diff = new_price - old_price
+
+            changes.append(price_diff)
+
+            if len(changes) >= 4:
+                sequence =  tuple(changes[-4:])
+                if sequence not in prices:
+                    prices[sequence] = new_price
+
+        for sequence, price in prices.items():
+            all_prices[sequence] += price
+
+    top = 0
+    for sequence, price in all_prices.items():
+        if price > top:
+            top = price
+            winning = sequence
+
+    logging.debug(winning)
+    logging.debug(top)
+
+    return top
 
 if __name__ == "__main__":
     # Parse CLI arguments
