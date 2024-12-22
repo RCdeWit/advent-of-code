@@ -2,18 +2,21 @@ import argparse
 import logging
 import sys
 import time
+from collections import defaultdict
 
-from collections import deque, defaultdict
 
 def parse_input(input: list) -> list:
     secrets = list(map(int, input))
     return secrets
 
+
 def mix(secret: int, value: int) -> int:
     return secret ^ value
 
+
 def prune(value: int) -> int:
     return value % 16777216
+
 
 def calculate_next_secret(secret: int) -> int:
     # multiply 64
@@ -33,6 +36,7 @@ def calculate_next_secret(secret: int) -> int:
 
     return secret
 
+
 def solve_1(input: list) -> str:
     secrets = parse_input(input)
 
@@ -44,10 +48,10 @@ def solve_1(input: list) -> str:
 
     return result
 
+
 def solve_2(input: list) -> str:
     secrets = parse_input(input)
 
-    result = 0
     all_prices = defaultdict(int)
     for secret in secrets:
         changes = []
@@ -61,7 +65,7 @@ def solve_2(input: list) -> str:
             changes.append(price_diff)
 
             if len(changes) >= 4:
-                sequence =  tuple(changes[-4:])
+                sequence = tuple(changes[-4:])
                 if sequence not in prices:
                     prices[sequence] = new_price
 
@@ -78,6 +82,7 @@ def solve_2(input: list) -> str:
     logging.debug(top)
 
     return top
+
 
 if __name__ == "__main__":
     # Parse CLI arguments
