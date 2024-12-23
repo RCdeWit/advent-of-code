@@ -37,6 +37,31 @@ def find_interconnections(networks: dict, computers: int = 3) -> dict:
 
     return interconnections
 
+def bron_kerbosch(nodes_in_clique: set, candidates: set, exclusions: set, networks: list, cliques: list):
+    # All possibilities checked
+    if not candidates and not exclusions:
+        cliques.append(nodes_in_clique)
+        return
+
+    for node in list(candidates):
+        # Expand the clique with the current node
+        bron_kerbosch(
+            nodes_in_clique | {node},  # Add node to the current clique
+            candidates & networks[node],  # Only keep candidates connected to node
+            exclusions & networks[node],  # Only keep exclusions connected to node
+            networks,
+            cliques
+        )
+        candidates.remove(node)  # Move the node from candidates to exclusions
+        exclusions.add(node)
+
+def find_maximal_cliques(networks: dict) -> list:
+    # Convert connections to a set-based adjacency list for efficient intersection
+    adjacency = {node: set(neighbors) for node, neighbors in networks.items()}
+    cliques = []
+    bron_kerbosch(set(), set(adjacency.keys()), set(), adjacency, cliques)
+    return cliques
+
 def solve_1(input: list) -> str:
     connections = parse_input(input)
     # logging.debug(connections)
@@ -57,7 +82,20 @@ def solve_1(input: list) -> str:
 
 
 def solve_2(input: list) -> str:
-    pass
+    connections = parse_input(input)
+    # logging.debug(connections)
+    networks = find_networks(connections)
+    # logging.debug(networks)
+
+    complete_networks = find_maximal_cliques(networks)
+    # logging.debug(complete_networks)
+
+    largest = []
+    for network in complete_networks:
+        if len(network) > len(largest):
+            largest = network
+
+    return ",".join(sorted(largest))
 
 if __name__ == "__main__":
     # Parse CLI arguments
