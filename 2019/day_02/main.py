@@ -3,8 +3,10 @@ import logging
 import sys
 import time
 
+
 def parse_input(input: list) -> list:
-    return [int(x) for x in input[0].split(',')]
+    return [int(x) for x in input[0].split(",")]
+
 
 def execute_program(program: list) -> list:
     pointer = 0
@@ -15,16 +17,20 @@ def execute_program(program: list) -> list:
         match opcode:
             case 1:
                 # Add
-                program[program[pointer + 3]] = program[program[pointer + 1]] + program[program[pointer + 2]]
+                program[program[pointer + 3]] = (
+                    program[program[pointer + 1]] + program[program[pointer + 2]]
+                )
                 num_parameters = 3
             case 2:
                 # Multiply
-                program[program[pointer + 3]] = program[program[pointer + 1]] * program[program[pointer + 2]]
+                program[program[pointer + 3]] = (
+                    program[program[pointer + 1]] * program[program[pointer + 2]]
+                )
                 num_parameters = 3
             case 99:
                 # Terminate
                 return program
-            
+
         pointer += num_parameters + 1
 
         if pointer >= len(program):
@@ -39,6 +45,7 @@ def solve_1(input: list) -> str:
 
     program = execute_program(program)
     return program[0]
+
 
 def solve_2(input: list) -> str:
     program = parse_input(input)
@@ -56,6 +63,7 @@ def solve_2(input: list) -> str:
 
     program = execute_program(program)
     return program[0]
+
 
 if __name__ == "__main__":
     # Parse CLI arguments

@@ -3,17 +3,21 @@ import logging
 import sys
 import time
 
+
 def parse_input(input: list) -> list:
     modules = [int(module) for module in input]
     return modules
 
+
 def calculate_fuel(module: int) -> int:
     return module // 3 - 2
+
 
 def solve_1(input: list) -> str:
     modules = parse_input(input)
     fuels = [calculate_fuel(module) for module in modules]
     return sum(fuels)
+
 
 def solve_2(input: list) -> str:
     modules = parse_input(input)

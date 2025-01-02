@@ -14,6 +14,7 @@ def parse_input(input: list) -> list:
 
     return list(set(connections))
 
+
 def find_networks(connections: list) -> dict:
     networks = defaultdict(list)
     for connection in connections:
@@ -24,7 +25,8 @@ def find_networks(connections: list) -> dict:
             networks[dest].append(source)
 
     return networks
-       
+
+
 def find_interconnections(networks: dict, computers: int = 3) -> dict:
     interconnections = []
     for source, destinations in networks.items():
@@ -37,7 +39,14 @@ def find_interconnections(networks: dict, computers: int = 3) -> dict:
 
     return interconnections
 
-def bron_kerbosch(nodes_in_clique: set, candidates: set, exclusions: set, networks: list, cliques: list):
+
+def bron_kerbosch(
+    nodes_in_clique: set,
+    candidates: set,
+    exclusions: set,
+    networks: list,
+    cliques: list,
+):
     # All possibilities checked
     if not candidates and not exclusions:
         cliques.append(nodes_in_clique)
@@ -50,10 +59,11 @@ def bron_kerbosch(nodes_in_clique: set, candidates: set, exclusions: set, networ
             candidates & networks[node],  # Only keep candidates connected to node
             exclusions & networks[node],  # Only keep exclusions connected to node
             networks,
-            cliques
+            cliques,
         )
         candidates.remove(node)  # Move the node from candidates to exclusions
         exclusions.add(node)
+
 
 def find_maximal_cliques(networks: dict) -> list:
     # Convert connections to a set-based adjacency list for efficient intersection
@@ -61,6 +71,7 @@ def find_maximal_cliques(networks: dict) -> list:
     cliques = []
     bron_kerbosch(set(), set(adjacency.keys()), set(), adjacency, cliques)
     return cliques
+
 
 def solve_1(input: list) -> str:
     connections = parse_input(input)
@@ -75,7 +86,7 @@ def solve_1(input: list) -> str:
         for computer in interconnection:
             if computer.startswith("t"):
                 valid = True
-        
+
         result += valid
 
     return result
@@ -96,6 +107,7 @@ def solve_2(input: list) -> str:
             largest = network
 
     return ",".join(sorted(largest))
+
 
 if __name__ == "__main__":
     # Parse CLI arguments
