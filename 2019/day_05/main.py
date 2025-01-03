@@ -19,7 +19,7 @@ def parse_opcode(opcode: int) -> tuple:
     # Pad opmodes with leading zeroes
     if result['opcode'] in (3, 4, 99):
         leading_zeroes_parameters = 0
-    if result['opcode'] in (1, 2):
+    elif result['opcode'] in (1, 2):
         leading_zeroes_parameters = 3 - len(result['opmode'])
     elif result['opcode'] in (5, 6, 7, 8):
         leading_zeroes_parameters = 2 - len(result['opmode'])
