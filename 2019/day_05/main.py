@@ -16,11 +16,15 @@ def parse_opcode(opcode: int) -> tuple:
         result['opmode'].append(opcode % 10)
         opcode = opcode // 10
 
-    leading_zeroes_parameters = 0
+    # Pad opmodes with leading zeroes
+    if result['opcode'] in (3, 4, 99):
+        leading_zeroes_parameters = 0
     if result['opcode'] in (1, 2):
         leading_zeroes_parameters = 3 - len(result['opmode'])
     elif result['opcode'] in (5, 6, 7, 8):
         leading_zeroes_parameters = 2 - len(result['opmode'])
+    else:
+        raise ValueError(f"Unknown opcode {opcode}: cannot pad with leading zeroes. Update `parse_opcode` method.")
 
     for _ in range(leading_zeroes_parameters):
         result['opmode'].append(0)
