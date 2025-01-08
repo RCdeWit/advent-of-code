@@ -9,7 +9,7 @@ from collections import defaultdict
 def parse_input(puzzle_input: list) -> list:
     return [int(x) for x in puzzle_input[0].split(",")]
 
-class PhysicalRobot:
+class Executor:
 
     def __init__(
         self,
@@ -20,7 +20,7 @@ class PhysicalRobot:
         self.received_outputs = []
         self.visited_locations = set([(0, 0)])
 
-    def get_pixel_value(self) -> int:
+    def get_input_value(self) -> int:
         return self.pixels[(self.location)]
 
     def receive_output(self, output_value: int) -> None:
@@ -96,7 +96,7 @@ class PhysicalRobot:
             print("".join(row))
 
 
-class ProgramState:
+class IntCode:
 
     def __init__(
         self,
@@ -104,18 +104,18 @@ class ProgramState:
         start_pointer: int = 0,
         preconfigured_inputs: list = None,
         relative_base: int = 0,
-        physical_robot: PhysicalRobot = None,
+        executor: Executor() = None,
     ):
-        self.program = program
+        self.program = program.copy()
         self.preconfigured_inputs = preconfigured_inputs if preconfigured_inputs else []
         self.pointer = start_pointer
         self.relative_base = relative_base
         self.outputs = []
         self.halted = False
-        self.physical_robot = physical_robot
+        self.executor = executor
 
     @staticmethod
-    def parse_opcode(opcode: int) -> tuple:
+    def _parse_opcode(opcode: int) -> tuple:
         result = {}
         result["opcode"] = opcode % 100
         result["opmode"] = []
@@ -152,97 +152,94 @@ class ProgramState:
 
         return (result["opcode"], result["opmode"])
 
-    def get_parameter_values(self, opmodes: list) -> int:
+    def _read(self, target: int, opmode: int) -> int:
         if self.pointer >= len(self.program):
             raise ValueError(
                 f"Pointer {self.pointer} exceeds length of program ({len(self.program)})"
             )
 
+        if opmode == 0: # Position mode
+            index = self.program[target]
+        elif opmode == 1: # Immediate mode
+            index = target
+        elif opmode == 2: # Relative mode
+            index = self.program[target] + self.relative_base
+
+        self._ensure_memory(index)
+        return self.program[index]
+
+    def _get_parameter_values(self, opmodes: list) -> list:
         parameters = []
         for i, opmode in enumerate(opmodes):
-            offset = i + 1
-            if opmode == 0:  # Position mode
-                index = self.program[self.pointer + offset]
-                self.ensure_memory(index)
-                parameter = self.program[index]
+            parameter_index = self.pointer + i + 1
+            param = self._read(parameter_index, opmode)
+            parameters.append(param)
 
-            elif opmode == 1:  # Immediate mode
-                index = self.pointer + offset
-                self.ensure_memory(index)
-                parameter = self.program[index]
-
-            elif opmode == 2:  # Relative mode
-                index = self.program[self.pointer + offset] + self.relative_base
-                self.ensure_memory(index)
-                parameter = self.program[index]
-            else:
-                raise ValueError(f"Unrecognised opmode: {opmode}")
-
-            parameters.append(parameter)
         return parameters
 
-    def get_destination_index(self, offset: int, opmode: int) -> int:
+    def _write(self, destination: int, value: int) -> None:
+        self._ensure_memory(destination)
+        self.program[destination] = value
+
+    def _get_destination(self, offset: int, opmode: int) -> int:
         index = self.program[self.pointer + offset]
         if opmode == 2:  # Relative mode
             index += self.relative_base
         elif opmode != 0:  # Unsupported parameter mode for destination
             raise ValueError(f"Unsupported parameter mode {opmode} for destination")
 
-        self.ensure_memory(index)  # Ensure memory is large enough for this index
         return index
 
-    def ensure_memory(self, index: int):
+    def _ensure_memory(self, index: int):
         if index >= len(self.program):
             self.program.extend([0] * (index + 1 - len(self.program)))
 
-    def execute_program(self) -> list:
-        while True:
-            # logging.debug(f"Pointer: {self.pointer}, Memory at pointer: {self.program[self.pointer]}")
-            opcode, opmodes = self.parse_opcode(self.program[self.pointer])
-            # logging.debug(f"opcode: {opcode}, opmodes: {opmodes}")
-
-            match opcode:
+    def _execute_step(self, opcode: int, opmodes: list) -> None:
+        match opcode:
                 case 1:  # Add // 3 params
-                    parameters = self.get_parameter_values(opmodes)
-                    destination = self.get_destination_index(3, opmodes[2])
-                    self.program[destination] = parameters[0] + parameters[1]
+                    parameters = self._get_parameter_values(opmodes)
+                    destination = self._get_destination(3, opmodes[2])
+                    output = parameters[0] + parameters[1]
+                    self._write(destination, output)
                     self.pointer += 4
 
                 case 2:  # Multiply // 3 params
-                    parameters = self.get_parameter_values(opmodes)
-                    destination = self.get_destination_index(3, opmodes[2])
-                    self.program[destination] = parameters[0] * parameters[1]
+                    parameters = self._get_parameter_values(opmodes)
+                    destination = self._get_destination(3, opmodes[2])
+                    output = parameters[0] * parameters[1]
+                    self._write(destination, output)
                     self.pointer += 4
 
                 case 3:  # Input // 1 param
                     if self.preconfigured_inputs:
                         input_value = self.preconfigured_inputs.pop(0)
-                    elif self.physical_robot:
-                        input_value = self.physical_robot.get_pixel_value()
+                    elif self.executor:
+                        input_value = self.executor.get_input_value()
                     else:
                         input_value = int(input("Provide input value: "))
 
-                    destination = self.get_destination_index(1, opmodes[0])
-                    self.program[destination] = input_value
+                    destination = self._get_destination(1, opmodes[0])
+                    self._write(destination, input_value)
                     self.pointer += 2
 
                 case 4:  # Output // 1 param
-                    parameters = self.get_parameter_values(opmodes)
-                    if self.physical_robot:
-                        self.physical_robot.receive_output(parameters[0])
+                    parameters = self._get_parameter_values(opmodes)
+
+                    if self.executor:
+                        self.executor.receive_output(parameters[0])
 
                     self.outputs.append(parameters[0])
                     self.pointer += 2
 
                 case 5:  # Jump if true // 2 params
-                    parameters = self.get_parameter_values(opmodes)
+                    parameters = self._get_parameter_values(opmodes)
                     if parameters[0] != 0:
                         self.pointer = parameters[1]
                     else:
                         self.pointer += 3
 
                 case 6:  # Jump if false // 2 params
-                    parameters = self.get_parameter_values(opmodes)
+                    parameters = self._get_parameter_values(opmodes)
 
                     if parameters[0] == 0:
                         self.pointer = parameters[1]
@@ -250,46 +247,52 @@ class ProgramState:
                         self.pointer += 3
 
                 case 7:  # Less than // 3 params
-                    parameters = self.get_parameter_values(opmodes)
-                    destination = self.get_destination_index(3, opmodes[2])
-                    self.program[destination] = int(parameters[0] < parameters[1])
+                    parameters = self._get_parameter_values(opmodes)
+                    destination = self._get_destination(3, opmodes[2])
+                    output = int(parameters[0] < parameters[1])
+                    self._write(destination, output)
                     self.pointer += 4
 
                 case 8:  # Equals // 3 params
-                    parameters = self.get_parameter_values(opmodes)
-                    destination = self.get_destination_index(3, opmodes[2])
-                    self.program[destination] = int(parameters[0] == parameters[1])
+                    parameters = self._get_parameter_values(opmodes)
+                    destination = self._get_destination(3, opmodes[2])
+                    output = int(parameters[0] == parameters[1])
+                    self._write(destination, output)
                     self.pointer += 4
 
                 case 9:  # Adjust relative base // 1 param
-                    parameters = self.get_parameter_values(opmodes)
+                    parameters = self._get_parameter_values(opmodes)
                     self.relative_base = self.relative_base + parameters[0]
                     self.pointer += 2
 
                 case 99:  # Terminate with halted flag // 0 params
                     self.halted = True
-                    return self.physical_robot if self.physical_robot else self
+                    return self
+
+    def run_program(self):
+        while not self.halted:
+            # logging.debug(f"Pointer: {self.pointer}, Memory at pointer: {self.program[self.pointer]}")
+            opcode, opmodes = self._parse_opcode(self.program[self.pointer])
+            self._execute_step(opcode, opmodes)
+
+        return self
+
+    def show(self):
+        return self
 
 
 def solve_1(puzzle_input: list) -> str:
     program = parse_input(puzzle_input)
-    physical_robot = PhysicalRobot()
-    program_state = ProgramState(program, physical_robot=physical_robot)
-    physical_robot = program_state.execute_program()
-
-    # physical_robot.print_pixels()
-    return physical_robot.count_painted_pixels()
+    intcode = IntCode(program, executor=Executor()).run_program()
+    return intcode.show().executor.count_painted_pixels()
 
 
 
 def solve_2(puzzle_input: list) -> str:
     program = parse_input(puzzle_input)
-    physical_robot = PhysicalRobot()
-    program_state = ProgramState(program, preconfigured_inputs=[1], physical_robot=physical_robot)
-    physical_robot = program_state.execute_program()
-
-    physical_robot.print_pixels()
-    return physical_robot.count_painted_pixels()
+    intcode = IntCode(program, preconfigured_inputs=[1], executor=Executor()).run_program()
+    intcode.show().executor.print_pixels()
+    return intcode.show().executor.count_painted_pixels()
 
 
 if __name__ == "__main__":
